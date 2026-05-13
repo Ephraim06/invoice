@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>TradeInvoice Creator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22TradeInvoice%20ZA%22%2C%22short_name%22%3A%22Invoice%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230a0a0a%22%2C%22theme_color%22%3A%22%230a0a0a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20100%20100'%3E%3Crect%20fill%3D'%23000'%20width%3D'100'%20height%3D'100'%2F%3E%3Ctext%20fill%3D'%23fff'%20x%3D'50'%20y%3D'55'%20font-size%3D'50'%20text-anchor%3D'middle'%20dominant-baseline%3D'middle'%3EINV%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22100x100%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+  <style>
+    body {
+      background: #ffffff;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: #0a0a0a;
+    }
+    .dark-card {
+      background: #0a0a0a;
+      color: #f8f8f8;
+      border-radius: 1.5rem;
+    }
+    .input-dark {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #fff;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      width: 100%;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .input-dark:focus {
+      border-color: #ffffff;
+    }
+    .btn-white {
+      background: #ffffff;
+      color: #0a0a0a;
+      font-weight: 600;
+      border-radius: 2rem;
+      padding: 0.75rem 1.5rem;
+      transition: 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #ffffff;
+      color: #ffffff;
+      font-weight: 500;
+      border-radius: 2rem;
+      padding: 0.65rem 1.5rem;
+      transition: 0.2s;
+    }
+    .btn-outline:hover, .btn-white:hover {
+      opacity: 0.9;
+    }
+    .separator {
+      border-top: 1px solid #333;
+      margin: 1.5rem 0;
+    }
+    .invoice-preview {
+      background: #ffffff;
+      color: #0a0a0a;
+      border-radius: 1.5rem;
+      box-shadow: 0 20px 35px rgba(0,0,0,0.05);
+    }
+    .toggle-checkbox:checked ~ .toggle-dot {
+      transform: translateX(100%);
+    }
+    .toggle-checkbox:checked ~ .toggle-bg {
+      background-color: #ffffff;
+    }
+    @media (max-width: 640px) {
+      .responsive-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <div id="app" class="max-w-4xl mx-auto w-full px-4 py-6 pb-24">
+    
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold tracking-tight">Invoice<span class="text-gray-500 font-normal"> ZA</span></h1>
+      <button id="newInvoiceBtn" class="btn-white text-sm px-5 py-2.5 shadow-sm">+ New Invoice</button>
+    </div>
+
+    <div id="invoiceEditor" class="dark-card p-5 md:p-7 mb-6 hidden">
+      <div class="flex justify-between items-center mb-5">
+        <h2 class="text-xl font-semibold" id="editorTitle">New Invoice</h2>
+        <button id="closeEditorBtn" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+
+      <!-- Company Logo Upload -->
+      <div class="mb-5">
+        <label class="text-sm text-gray-300 block mb-2">Company Logo</label>
+        <div class="flex items-center gap-4">
+          <input type="file" id="logoInput" accept="image/*" class="hidden" />
+          <div id="logoPreviewContainer" class="w-16 h-16 rounded-xl bg-gray-800 flex items-center justify-center overflow-hidden border border-gray-700 cursor-pointer" onclick="document.getElementById('logoInput').click()">
+            <span id="logoPlaceholder" class="text-gray-400 text-xs">LOGO</span>
+            <img id="logoPreviewImg" src="#" alt="logo" class="w-full h-full object-cover hidden" />
+          </div>
+          <button id="removeLogoBtn" class="text-xs text-red-400 underline hidden">Remove</button>
+        </div>
+      </div>
+
+      <!-- Invoice Details Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm text-gray-300">Invoice Number</label>
+          <input id="invoiceNumber" class="input-dark" placeholder="INV-001" />
+        </div>
+        <div>
+          <label class="text-sm text-gray-300">Invoice Date</label>
+          <input id="invoiceDate" type="date" class="input-dark" />
+        </div>
+        <div>
+          <label class="text-sm text-gray-300">Due Date</label>
+          <input id="dueDate" type="date" class="input-dark" />
+        </div>
+        <div>
+          <label class="text-sm text-gray-300">Reference / PO Number</label>
+          <input id="referenceNumber" class="input-dark" placeholder="PO-12345" />
+        </div>
+      </div>
+
+      <div class="separator"></div>
+      <h3 class="text-sm font-semibold text-gray-300 mb-3">Your Business Details</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="md:col-span-2">
+          <label class="text-sm text-gray-300">Business Name</label>
+          <input id="businessName" class="input-dark" placeholder="Tech Solutions Pty" />
+        </div>
+        <div class="md:col-span-2">
+          <label class="text-sm text-gray-300">Business Address</label>
+          <input id="businessAddress" class="input-dark" placeholder="123 Main Road, Cape Town" />
+        </div>
+        <div>
+          <label class="text-sm text-gray-300">Email</label>
+          <input id="businessEmail" class="input-dark" placeholder="info@tech.co.za" />
+        </div>
+        <div>
+          <label class="text-sm text-gray-300">Phone</label>
+          <input id="businessPhone" class="input-dark" placeholder="+27 21 123 4567" />
+        </div>
+      </div>
+
+      <div class="separator"></div>
+      <h3 class="text-sm font-semibold text-gray-300 mb-3">Banking Details (appears on invoice)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm text-gray-300">Bank Name</label>
+          <input id="bankName" class="input-dark" placeholder="FNB / Standard Bank" />
+        </div>
+        <div>
+          <label class="text-sm text-gray-300">Account Holder</label>
+          <input id="accountHolder" class="input-dark" placeholder="Tech Solutions Pty" />
+        </div>
+        <div>
+          <label class="text-sm text-gray-300">Account Number</label>
+          <input id="accountNumber" class="input-dark" placeholder="1234567890" />
+        </div>
+        <div>
+          <label class="text-sm text-gray-300">Branch Code</label>
+          <input id="branchCode" class="input-dark" placeholder="250655" />
+        </div>
+      </div>
+
+      <div class="separator"></div>
+      <h3 class="text-sm font-semibold text-gray-300 mb-3">Client Details</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="md:col-span-2">
+          <label class="text-sm text-gray-300">Client / Company Name</label>
+          <input id="clientName" class="input-dark" placeholder="Client or Company" />
+        </div>
+        <div class="md:col-span-2">
+          <label class="text-sm text-gray-300">Client Address</label>
+          <input id="clientAddress" class="input-dark" placeholder="456 Long Street, Johannesburg" />
+        </div>
+        <div>
+          <label class="text-sm text-gray-300">Client Email</label>
+          <input id="clientEmail" class="input-dark" placeholder="client@example.com" />
+        </div>
+        <div>
+          <label class="text-sm text-gray-300">Client Phone</label>
+          <input id="clientPhone" class="input-dark" placeholder="+27 82 111 2222" />
+        </div>
+      </div>
+
+      <!-- Line Items -->
+      <div class="mt-6">
+        <div class="flex justify-between items-center">
+          <h3 class="text-sm font-semibold text-gray-300">Items / Services</h3>
+          <button id="addItemBtn" class="text-white text-sm border border-gray-600 px-3 py-1 rounded-full">+ Add</button>
+        </div>
+        <div id="itemsContainer" class="mt-3 space-y-3"></div>
+      </div>
+
+      <!-- VAT Toggle & Notes -->
+      <div class="separator"></div>
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <label class="text-sm text-gray-300 font-medium">Include VAT (15%)</label>
+          <label for="vatToggle" class="flex items-center cursor-pointer">
+            <div class="relative">
+              <input type="checkbox" id="vatToggle" class="sr-only toggle-checkbox" checked />
+              <div class="toggle-bg block bg-gray-600 w-10 h-6 rounded-full"></div>
+              <div class="toggle-dot absolute left-1 top-1 bg-black w-4 h-4 rounded-full transition"></div>
+            </div>
+          </label>
+        </div>
+        <div class="flex-1 min-w-[200px]">
+          <label class="text-sm text-gray-300 block">Notes / Payment Instructions</label>
+          <input id="invoiceNotes" class="input-dark" placeholder="Thank you for your business!" />
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-between items-end mt-4">
+        <div class="text-sm space-y-1">
+          <p>Subtotal: <span id="subtotalDisplay" class="font-mono">R 0.00</span></p>
+          <p id="vatLine">VAT (15%): <span id="vatDisplay" class="font-mono">R 0.00</span></p>
+          <p class="text-lg font-bold mt-1">Total: <span id="totalDisplay" class="font-mono">R 0.00</span></p>
+        </div>
+        <button id="saveInvoiceBtn" class="btn-white mt-3 md:mt-0">Save Invoice</button>
+      </div>
+    </div>
+
+    <!-- SAVED INVOICES LIST -->
+    <div id="invoiceListSection">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-lg font-semibold text-gray-800">Recent Invoices</h2>
+        <span class="text-sm text-gray-500" id="invoiceCount">0 saved</span>
+      </div>
+      <div id="invoiceCardsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      <div id="emptyState" class="text-center py-16 text-gray-400">
+        <p>No invoices yet.</p>
+        <p class="text-sm">Tap "+ New Invoice" to create one.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="fixed bottom-0 left-0 right-0 bg-black text-white p-3 flex justify-around items-center z-20 border-t border-gray-800">
+    <button id="navListBtn" class="flex flex-col items-center text-xs font-medium opacity-70 hover:opacity-100">
+      <span class="text-lg">📋</span> All Invoices
+    </button>
+    <button id="navNewBtn" class="flex flex-col items-center text-xs font-medium opacity-70 hover:opacity-100">
+      <span class="text-lg">➕</span> New
+    </button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    (function() {
+      const STORAGE_KEY = 'trade_invoices_za_v3';
+      let invoices = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      let currentInvoiceId = null;
+      let logoDataUrl = null;
+
+      const invoiceEditor = document.getElementById('invoiceEditor');
+      const invoiceListSection = document.getElementById('invoiceListSection');
+      const editorTitle = document.getElementById('editorTitle');
+      const itemsContainer = document.getElementById('itemsContainer');
+      const invoiceNumber = document.getElementById('invoiceNumber');
+      const invoiceDate = document.getElementById('invoiceDate');
+      const dueDate = document.getElementById('dueDate');
+      const referenceNumber = document.getElementById('referenceNumber');
+      const clientName = document.getElementById('clientName');
+      const clientAddress = document.getElementById('clientAddress');
+      const clientEmail = document.getElementById('clientEmail');
+      const clientPhone = document.getElementById('clientPhone');
+      const businessName = document.getElementById('businessName');
+      const businessAddress = document.getElementById('businessAddress');
+      const businessEmail = document.getElementById('businessEmail');
+      const businessPhone = document.getElementById('businessPhone');
+      const bankName = document.getElementById('bankName');
+      const accountHolder = document.getElementById('accountHolder');
+      const accountNumber = document.getElementById('accountNumber');
+      const branchCode = document.getElementById('branchCode');
+      const invoiceNotes = document.getElementById('invoiceNotes');
+      const vatToggle = document.getElementById('vatToggle');
+      const subtotalDisplay = document.getElementById('subtotalDisplay');
+      const vatDisplay = document.getElementById('vatDisplay');
+      const totalDisplay = document.getElementById('totalDisplay');
+      const vatLine = document.getElementById('vatLine');
+      const invoiceCardsContainer = document.getElementById('invoiceCardsContainer');
+      const emptyState = document.getElementById('emptyState');
+      const invoiceCount = document.getElementById('invoiceCount');
+      const logoInput = document.getElementById('logoInput');
+      const logoPreviewImg = document.getElementById('logoPreviewImg');
+      const logoPlaceholder = document.getElementById('logoPlaceholder');
+      const removeLogoBtn = document.getElementById('removeLogoBtn');
+
+      function saveToStorage() { localStorage.setItem(STORAGE_KEY, JSON.stringify(invoices)); }
+      function formatCurrency(amount) { return 'R ' + parseFloat(amount).toFixed(2); }
+
+      function calculateTotals(items, includeVat) {
+        const subtotal = items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+        const vat = includeVat ? subtotal * 0.15 : 0;
+        const total = subtotal + vat;
+        return { subtotal, vat, total };
+      }
+
+      function updateTotalsDisplay() {
+        const items = getCurrentItemsFromDOM();
+        const includeVat = vatToggle.checked;
+        const { subtotal, vat, total } = calculateTotals(items, includeVat);
+        subtotalDisplay.textContent = formatCurrency(subtotal);
+        vatDisplay.textContent = formatCurrency(vat);
+        totalDisplay.textContent = formatCurrency(total);
+        vatLine.style.display = includeVat ? '' : 'none';
+      }
+
+      function getCurrentItemsFromDOM() {
+        return Array.from(document.querySelectorAll('.item-row')).map(row => ({
+          description: row.querySelector('.item-desc')?.value || '',
+          quantity: parseFloat(row.querySelector('.item-qty')?.value) || 0,
+          unitPrice: parseFloat(row.querySelector('.item-price')?.value) || 0
+        }));
+      }
+
+      function renderItems(items = []) {
+        itemsContainer.innerHTML = '';
+        if (!items.length) addItemRow();
+        else items.forEach(item => addItemRow(item));
+        updateTotalsDisplay();
+      }
+
+      function addItemRow(item = { description: '', quantity: 1, unitPrice: 0 }) {
+        const row = document.createElement('div');
+        row.className = 'item-row flex flex-wrap md:flex-nowrap items-center gap-2 bg-gray-900 p-3 rounded-xl';
+        row.innerHTML = `
+          <input class="item-desc input-dark flex-1 min-w-[120px]" placeholder="Service / part" value="${escapeHtml(item.description)}" />
+          <input class="item-qty input-dark w-20 text-center" type="number" min="0" step="1" value="${item.quantity || 1}" />
+          <input class="item-price input-dark w-28 text-center" type="number" min="0" step="0.01" value="${item.unitPrice || 0}" />
+          <button class="remove-item-btn text-red-400 hover:text-red-300 text-xl px-1">&times;</button>
+        `;
+        itemsContainer.appendChild(row);
+        row.querySelector('.remove-item-btn').addEventListener('click', () => {
+          if (document.querySelectorAll('.item-row').length <= 1) { alert('At least one item required.'); return; }
+          row.remove(); updateTotalsDisplay();
+        });
+        row.querySelectorAll('input').forEach(input => input.addEventListener('input', updateTotalsDisplay));
+      }
+
+      function escapeHtml(text) { return String(text).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m]); }
+
+      function resetEditor() {
+        currentInvoiceId = null;
+        editorTitle.textContent = 'New Invoice';
+        invoiceNumber.value = 'INV-' + Date.now().toString().slice(-6);
+        invoiceDate.value = new Date().toISOString().split('T')[0];
+        dueDate.value = ''; referenceNumber.value = '';
+        clientName.value = ''; clientAddress.value = ''; clientEmail.value = ''; clientPhone.value = '';
+        businessName.value = ''; businessAddress.value = ''; businessEmail.value = ''; businessPhone.value = '';
+        bankName.value = ''; accountHolder.value = ''; accountNumber.value = ''; branchCode.value = '';
+        invoiceNotes.value = ''; vatToggle.checked = true;
+        logoDataUrl = null;
+        logoPreviewImg.classList.add('hidden'); logoPlaceholder.classList.remove('hidden'); removeLogoBtn.classList.add('hidden');
+        renderItems([{ description: '', quantity: 1, unitPrice: 0 }]);
+      }
+
+      function openEditor(invoice = null) {
+        invoiceEditor.classList.remove('hidden');
+        invoiceListSection.classList.add('hidden');
+        if (invoice) {
+          currentInvoiceId = invoice.id;
+          editorTitle.textContent = 'Edit Invoice';
+          invoiceNumber.value = invoice.invoiceNumber || '';
+          invoiceDate.value = invoice.date || '';
+          dueDate.value = invoice.dueDate || '';
+          referenceNumber.value = invoice.reference || '';
+          clientName.value = invoice.clientName || '';
+          clientAddress.value = invoice.clientAddress || '';
+          clientEmail.value = invoice.clientEmail || '';
+          clientPhone.value = invoice.clientPhone || '';
+          businessName.value = invoice.businessName || '';
+          businessAddress.value = invoice.businessAddress || '';
+          businessEmail.value = invoice.businessEmail || '';
+          businessPhone.value = invoice.businessPhone || '';
+          bankName.value = invoice.bankName || '';
+          accountHolder.value = invoice.accountHolder || '';
+          accountNumber.value = invoice.accountNumber || '';
+          branchCode.value = invoice.branchCode || '';
+          invoiceNotes.value = invoice.notes || '';
+          vatToggle.checked = invoice.includeVat !== false;
+          logoDataUrl = invoice.logo || null;
+          if (logoDataUrl) {
+            logoPreviewImg.src = logoDataUrl; logoPreviewImg.classList.remove('hidden'); logoPlaceholder.classList.add('hidden'); removeLogoBtn.classList.remove('hidden');
+          } else {
+            logoPreviewImg.classList.add('hidden'); logoPlaceholder.classList.remove('hidden'); removeLogoBtn.classList.add('hidden');
+          }
+          renderItems(invoice.items || []);
+        } else {
+          resetEditor();
+        }
+      }
+
+      function closeEditor() {
+        invoiceEditor.classList.add('hidden');
+        invoiceListSection.classList.remove('hidden');
+        renderInvoiceList();
+      }
+
+      function saveInvoice() {
+        const items = getCurrentItemsFromDOM();
+        if (!clientName.value.trim() || !businessName.value.trim()) {
+          alert('Please fill in client name and your business name.'); return;
+        }
+        const invoiceData = {
+          id: currentInvoiceId || Date.now().toString(),
+          invoiceNumber: invoiceNumber.value.trim(),
+          date: invoiceDate.value,
+          dueDate: dueDate.value,
+          reference: referenceNumber.value.trim(),
+          clientName: clientName.value.trim(),
+          clientAddress: clientAddress.value.trim(),
+          clientEmail: clientEmail.value.trim(),
+          clientPhone: clientPhone.value.trim(),
+          businessName: businessName.value.trim(),
+          businessAddress: businessAddress.value.trim(),
+          businessEmail: businessEmail.value.trim(),
+          businessPhone: businessPhone.value.trim(),
+          bankName: bankName.value.trim(),
+          accountHolder: accountHolder.value.trim(),
+          accountNumber: accountNumber.value.trim(),
+          branchCode: branchCode.value.trim(),
+          items: items,
+          includeVat: vatToggle.checked,
+          notes: invoiceNotes.value.trim(),
+          logo: logoDataUrl,
+          createdAt: currentInvoiceId ? (invoices.find(i=>i.id===currentInvoiceId)?.createdAt || new Date().toISOString()) : new Date().toISOString()
+        };
+        if (currentInvoiceId) {
+          const idx = invoices.findIndex(i => i.id === currentInvoiceId);
+          if (idx !== -1) invoices[idx] = invoiceData;
+        } else {
+          invoices.push(invoiceData);
+        }
+        saveToStorage();
+        closeEditor();
+      }
+
+      function deleteInvoice(id) {
+        if (confirm('Delete this invoice permanently?')) {
+          invoices = invoices.filter(i => i.id !== id);
+          saveToStorage(); renderInvoiceList();
+        }
+      }
+
+      function editInvoice(id) {
+        const inv = invoices.find(i => i.id === id);
+        if (inv) openEditor(inv);
+      }
+
+      async function downloadInvoicePDF(invoice) {
+        const pdfContainer = document.createElement('div');
+        pdfContainer.style.position = 'absolute'; pdfContainer.style.left = '-9999px'; pdfContainer.style.width = '800px';
+        pdfContainer.style.padding = '40px'; pdfContainer.style.background = '#ffffff'; pdfContainer.style.color = '#000';
+        pdfContainer.style.fontFamily = 'Inter, sans-serif';
+        const { subtotal, vat, total } = calculateTotals(invoice.items, invoice.includeVat);
+        const logoImg = invoice.logo ? `<img src="${invoice.logo}" style="max-height:60px; max-width:160px;" />` : '';
+        const itemsHtml = invoice.items.map(item => `
+          <tr><td style="padding:8px;">${escapeHtml(item.description)}</td><td style="text-align:center;">${item.quantity}</td>
+          <td style="text-align:right;">${formatCurrency(item.unitPrice)}</td><td style="text-align:right;">${formatCurrency(item.quantity*item.unitPrice)}</td></tr>`).join('');
+        const vatRow = invoice.includeVat ? `<tr><td colspan="3" style="text-align:right;">VAT (15%)</td><td style="text-align:right;">${formatCurrency(vat)}</td></tr>` : '';
+        const bankingHtml = (invoice.bankName || invoice.accountNumber) ? `
+          <div style="margin-top:25px; border-top:1px solid #ccc; padding-top:15px;">
+            <strong>Banking Details</strong><br>
+            ${invoice.accountHolder ? `Account Holder: ${escapeHtml(invoice.accountHolder)}<br>` : ''}
+            ${invoice.bankName ? `Bank: ${escapeHtml(invoice.bankName)}<br>` : ''}
+            ${invoice.accountNumber ? `Account Number: ${escapeHtml(invoice.accountNumber)}<br>` : ''}
+            ${invoice.branchCode ? `Branch Code: ${escapeHtml(invoice.branchCode)}` : ''}
+          </div>` : '';
+        pdfContainer.innerHTML = `
+          <div style="display:flex; justify-content:space-between;"><div>${logoImg}</div><div style="text-align:right;"><h2>INVOICE</h2><p>#${escapeHtml(invoice.invoiceNumber)}</p></div></div>
+          <div style="display:flex; justify-content:space-between; margin:20px 0;">
+            <div><strong>From:</strong><br>${escapeHtml(invoice.businessName)}<br>${escapeHtml(invoice.businessAddress)}<br>${escapeHtml(invoice.businessEmail)}<br>${escapeHtml(invoice.businessPhone)}</div>
+            <div><strong>Bill To:</strong><br>${escapeHtml(invoice.clientName)}<br>${escapeHtml(invoice.clientAddress)}<br>${escapeHtml(invoice.clientEmail)}<br>${escapeHtml(invoice.clientPhone)}</div>
+          </div>
+          <div style="display:flex; gap:40px; margin:10px 0;"><p><strong>Date:</strong> ${invoice.date}</p><p><strong>Due:</strong> ${invoice.dueDate || 'N/A'}</p><p><strong>Ref:</strong> ${invoice.reference || '-'}</p></div>
+          <table style="width:100%; border-collapse:collapse; margin:20px 0;" border="1" cellpadding="8">
+            <thead><tr style="background:#f0f0f0;"><th>Description</th><th>Qty</th><th>Unit Price</th><th>Amount</th></tr></thead>
+            <tbody>${itemsHtml}</tbody>
+          </table>
+          <div style="text-align:right; margin-top:10px;"><p>Subtotal: ${formatCurrency(subtotal)}</p>${vatRow}<h3>Total: ${formatCurrency(total)}</h3></div>
+          <p style="margin-top:20px; font-style:italic;">${escapeHtml(invoice.notes || '')}</p>
+          ${bankingHtml}
+        `;
+        document.body.appendChild(pdfContainer);
+        try {
+          const canvas = await html2canvas(pdfContainer, { scale: 2, backgroundColor: '#ffffff' });
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+          pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdfWidth, pdfHeight);
+          pdf.save(`invoice_${invoice.invoiceNumber}.pdf`);
+        } catch (err) { alert('PDF error: '+err); }
+        finally { document.body.removeChild(pdfContainer); }
+      }
+
+      function shareViaWhatsApp(invoice) {
+        const total = formatCurrency(calculateTotals(invoice.items, invoice.includeVat).total);
+        window.open(`https://wa.me/?text=${encodeURIComponent(`Invoice ${invoice.invoiceNumber} from ${invoice.businessName} - Total: ${total}`)}`, '_blank');
+      }
+      function shareViaEmail(invoice) {
+        const total = formatCurrency(calculateTotals(invoice.items, invoice.includeVat).total);
+        window.location.href = `mailto:?subject=${encodeURIComponent('Invoice '+invoice.invoiceNumber)}&body=${encodeURIComponent(`Dear ${invoice.clientName},\n\nInvoice from ${invoice.businessName}.\nTotal: ${total}\nThank you.`)}`;
+      }
+
+      function renderInvoiceList() {
+        invoiceCardsContainer.innerHTML = '';
+        if (!invoices.length) { emptyState.classList.remove('hidden'); invoiceCount.textContent = '0 saved'; }
+        else {
+          emptyState.classList.add('hidden'); invoiceCount.textContent = `${invoices.length} saved`;
+          invoices.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt)).forEach(inv => {
+            const { total } = calculateTotals(inv.items, inv.includeVat);
+            const card = document.createElement('div');
+            card.className = 'bg-white border border-gray-200 rounded-2xl p-4 shadow-sm flex flex-col justify-between';
+            card.innerHTML = `
+              <div><div class="flex justify-between"><h3 class="font-bold text-lg">${escapeHtml(inv.clientName)}</h3><span class="text-xs bg-gray-100 px-2 py-1 rounded-full">${escapeHtml(inv.invoiceNumber)}</span></div>
+              <p class="text-sm text-gray-500">${inv.businessName}</p><p class="text-xs text-gray-400">${inv.date} ${inv.dueDate ? '· Due '+inv.dueDate : ''}</p>
+              <p class="font-mono text-lg font-semibold mt-2">${formatCurrency(total)}</p></div>
+              <div class="flex gap-2 mt-4 flex-wrap">
+                <button class="edit-btn text-xs bg-gray-900 text-white px-3 py-1.5 rounded-full">Edit</button>
+                <button class="pdf-btn text-xs border border-gray-300 px-3 py-1.5 rounded-full">PDF</button>
+                <button class="whatsapp-btn text-xs bg-green-700 text-white px-3 py-1.5 rounded-full">WA</button>
+                <button class="email-btn text-xs bg-blue-700 text-white px-3 py-1.5 rounded-full">@</button>
+                <button class="delete-btn text-xs text-red-600 ml-auto">🗑</button>
+              </div>`;
+            card.querySelector('.edit-btn').addEventListener('click', ()=> editInvoice(inv.id));
+            card.querySelector('.pdf-btn').addEventListener('click', ()=> downloadInvoicePDF(inv));
+            card.querySelector('.whatsapp-btn').addEventListener('click', ()=> shareViaWhatsApp(inv));
+            card.querySelector('.email-btn').addEventListener('click', ()=> shareViaEmail(inv));
+            card.querySelector('.delete-btn').addEventListener('click', ()=> deleteInvoice(inv.id));
+            invoiceCardsContainer.appendChild(card);
+          });
+        }
+      }
+
+      document.getElementById('newInvoiceBtn').addEventListener('click', ()=> openEditor(null));
+      document.getElementById('navNewBtn').addEventListener('click', ()=> openEditor(null));
+      document.getElementById('navListBtn').addEventListener('click', closeEditor);
+      document.getElementById('closeEditorBtn').addEventListener('click', closeEditor);
+      document.getElementById('saveInvoiceBtn').addEventListener('click', saveInvoice);
+      document.getElementById('addItemBtn').addEventListener('click', ()=> addItemRow());
+      vatToggle.addEventListener('change', updateTotalsDisplay);
+      logoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if(file) { const r = new FileReader(); r.onload = ev => { logoDataUrl = ev.target.result; logoPreviewImg.src=logoDataUrl; logoPreviewImg.classList.remove('hidden'); logoPlaceholder.classList.add('hidden'); removeLogoBtn.classList.remove('hidden'); }; r.readAsDataURL(file); }
+      });
+      removeLogoBtn.addEventListener('click', ()=>{ logoDataUrl=null; logoPreviewImg.classList.add('hidden'); logoPlaceholder.classList.remove('hidden'); removeLogoBtn.classList.add('hidden'); logoInput.value=''; });
+      renderInvoiceList();
+    })();
+  </script>
+</body>
+</html>
