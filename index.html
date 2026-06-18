@@ -10,12 +10,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>BizFlow • Business Engine</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+  </script>
 
   <script>
     tailwind.config = {
@@ -47,6 +50,8 @@
       --text-secondary: #86868b;
       --border-system: #e5e5ea;
       --ios-blur: rgba(255, 255, 255, 0.8);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     .dark {
@@ -58,12 +63,23 @@
       --ios-blur: rgba(28, 28, 30, 0.8);
     }
 
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
       background-color: var(--bg-system);
       color: var(--text-primary);
       font-family: 'Montserrat', sans-serif;
       -webkit-font-smoothing: antialiased;
       transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      height: 100vh;
+      height: 100dvh;
+      padding: 0;
+      margin: 0;
+      position: relative;
     }
 
     /* iOS Glassmorphism Effects */
@@ -98,12 +114,20 @@
       padding: 0.75rem 1rem;
       font-weight: 500;
       transition: all 0.2s ease;
+      width: 100%;
+      font-size: 14px;
     }
 
     .ios-input:focus {
       border-color: #0071e3;
       background: var(--bg-card);
       box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+      outline: none;
+    }
+
+    .ios-input-sm {
+      padding: 0.5rem 0.75rem;
+      font-size: 12px;
     }
 
     /* iOS Interactive Switches */
@@ -115,6 +139,7 @@
       position: relative;
       transition: background 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
+      flex-shrink: 0;
     }
 
     .dark .ios-switch {
@@ -171,7 +196,6 @@
         opacity: 0;
         transform: translateY(4px);
       }
-
       to {
         opacity: 1;
         transform: translateY(0);
@@ -187,6 +211,187 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+
+    /* Modal 80% width override */
+    #sheetContentFrame {
+      max-width: 80% !important;
+      width: 80% !important;
+      max-height: 90vh !important;
+      max-height: 90dvh !important;
+    }
+
+    @media (max-width: 640px) {
+      #sheetContentFrame {
+        max-width: 95% !important;
+        width: 95% !important;
+        max-height: 92vh !important;
+        max-height: 92dvh !important;
+        border-radius: 20px;
+      }
+      #universalSheetModal {
+        padding: 8px;
+      }
+    }
+
+    /* Logo upload preview */
+    .logo-preview {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border-system);
+      background: var(--bg-system);
+      flex-shrink: 0;
+    }
+
+    .logo-upload-btn {
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 10px;
+      background: var(--bg-system);
+      border: 1px solid var(--border-system);
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .logo-upload-btn:hover {
+      background: var(--border-system);
+    }
+
+    /* Mobile specific fixes */
+    #mobile-app-shell .ios-input {
+      font-size: 14px;
+      padding: 0.6rem 0.85rem;
+    }
+
+    #mobile-app-shell select.ios-input {
+      padding-right: 2rem;
+      appearance: auto;
+      -webkit-appearance: auto;
+    }
+
+    /* Fix for modal scroll */
+    #universalSheetPayload .ios-input {
+      font-size: 14px;
+    }
+
+    /* Ensure no overlap on mobile header */
+    #mobile-view-viewport {
+      padding-top: calc(36px + env(safe-area-inset-top, 0px));
+      padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    }
+
+    @media (max-width: 640px) {
+      #mobile-view-viewport {
+        padding-top: 32px;
+        padding-bottom: 80px;
+      }
+    }
+
+    /* Better card spacing on mobile */
+    @media (max-width: 640px) {
+      .ios-card {
+        border-radius: 12px;
+      }
+      #desktop-view-viewport,
+      #mobile-view-viewport {
+        padding-left: 12px;
+        padding-right: 12px;
+        margin-top: 100px;
+      }
+      .grid {
+        gap: 12px;
+      }
+    }
+
+    /* Fix for modal form elements */
+    #universalSheetPayload .space-y-3>*+* {
+      margin-top: 0.75rem;
+    }
+
+    #universalSheetPayload .grid {
+      gap: 0.75rem;
+    }
+
+    /* Dynamic item row on mobile */
+    @media (max-width: 480px) {
+      .dynamic-item-form-row {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .dynamic-item-form-row .line-desc-field {
+        flex: 1 1 100%;
+        min-width: 100%;
+      }
+      .dynamic-item-form-row .line-qty-field {
+        flex: 1 1 30%;
+        min-width: 50px;
+      }
+      .dynamic-item-form-row .line-price-field {
+        flex: 1 1 40%;
+        min-width: 80px;
+      }
+    }
+
+    /* Scrollable container for items */
+    #form_itemsTrackContainer {
+      max-height: 160px;
+      overflow-y: auto;
+    }
+
+    /* Better touch targets */
+    button,
+    .logo-upload-btn,
+    .ios-switch {
+      touch-action: manipulation;
+    }
+
+    /* Improve select appearance on mobile */
+    select.ios-input {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2386868b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    /* Fix dark mode select arrow */
+    .dark select.ios-input {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2398989d' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    }
+
+    /* Ensure proper spacing for company items */
+    .company-item {
+      padding: 12px 14px;
+    }
+
+    @media (max-width: 640px) {
+      .company-item {
+        padding: 10px 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .company-item .company-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+
+    /* Dashboard card improvements */
+    .stat-card {
+      padding: 16px;
+    }
+
+    @media (max-width: 480px) {
+      .stat-card {
+        padding: 12px 14px;
+      }
+      .stat-card h3 {
+        font-size: 1.1rem;
+      }
+    }
   </style>
 </head>
 
@@ -194,98 +399,102 @@
 
   <div id="desktop-app-shell" class="hidden lg:flex h-full w-full overflow-hidden">
     <aside
-      class="w-72 border-r border-[var(--border-system)] bg-[var(--bg-card)] flex flex-col justify-between p-6 transition-colors duration-400 z-30">
-      <div class="space-y-8">
+      class="w-72 border-r border-[var(--border-system)] bg-[var(--bg-card)] flex flex-col justify-between p-6 transition-colors duration-400 z-30 flex-shrink-0">
+      <div class="space-y-6">
         <div class="flex items-center gap-3 px-2">
           <div
-            class="h-10 w-10 rounded-xl bg-gradient-to-tr from-ios-blue to-ios-purple flex items-center justify-center text-white shadow-md">
+            class="h-10 w-10 rounded-xl bg-gradient-to-tr from-ios-blue to-ios-purple flex items-center justify-center text-white shadow-md flex-shrink-0">
             <span class="text-xl font-bold">B</span>
           </div>
-          <div>
-            <h1 class="text-lg font-bold tracking-tight">BizFlow</h1>
+          <div class="min-w-0">
+            <h1 class="text-lg font-bold tracking-tight truncate">BizFlow</h1>
             <p class="text-[10px] text-ios-gray font-semibold tracking-widest uppercase">Enterprise OS</p>
           </div>
         </div>
 
         <div class="space-y-2">
-          <label class="text-[11px] font-bold text-ios-gray uppercase tracking-wider px-2">Active Company</label>
-          <select id="desktopCompanySelect"
-            class="ios-input w-full py-2.5 text-xs font-semibold cursor-pointer"></select>
-        </div>
+  <label class="text-[11px] font-bold text-ios-gray uppercase tracking-wider px-2 block">Active Company</label>
+  <div class="relative">
+    <select id="desktopCompanySelect"
+      class="w-full appearance-none bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-system)] rounded-xl py-3 px-4 pr-12 text-sm font-semibold cursor-pointer transition-all duration-200 focus:outline-none focus:border-ios-blue focus:ring-2 focus:ring-ios-blue/20 hover:border-ios-blue/50">
+    </select>
+  </div>
+</div>
 
-        <nav class="space-y-1.5">
+        <nav class="space-y-1">
           <label class="text-[11px] font-bold text-ios-gray uppercase tracking-wider px-2 block mb-2">Workspaces</label>
           <button onclick="switchView('dashboard')"
             class="d-nav-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-semibold text-ios-gray hover:bg-[var(--bg-system)] transition-all"
             data-nav="dashboard">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path
                 d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z">
               </path>
             </svg>
-            Dashboard Matrix
+            <span class="truncate">Dashboard</span>
           </button>
           <button onclick="switchView('documents')"
             class="d-nav-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-semibold text-ios-gray hover:bg-[var(--bg-system)] transition-all"
             data-nav="documents">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
               </path>
             </svg>
-            Document Engine
+            <span class="truncate">Documents</span>
           </button>
           <button onclick="switchView('reports')"
             class="d-nav-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-semibold text-ios-gray hover:bg-[var(--bg-system)] transition-all"
             data-nav="reports">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
               </path>
             </svg>
-            Financial Analytics
+            <span class="truncate">Reports</span>
           </button>
           <button onclick="switchView('companies')"
             class="d-nav-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-semibold text-ios-gray hover:bg-[var(--bg-system)] transition-all"
             data-nav="companies">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path
                 d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
               </path>
             </svg>
-            Companies
+            <span class="truncate">Companies</span>
           </button>
         </nav>
       </div>
 
-      <div class="space-y-3">
+      <div class="space-y-3 pt-4 border-t border-[var(--border-system)]">
         <button onclick="openNewDocumentForm()"
           class="w-full bg-ios-blue text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-blue-500/10 hover:opacity-95 transition-all text-sm flex items-center justify-center gap-2">
           <span>+</span> Create New
         </button>
         <button onclick="masterThemeToggler()"
           class="w-full border border-[var(--border-system)] bg-[var(--bg-system)] text-[var(--text-primary)] font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all hover:bg-[var(--border-system)]">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
           </svg>
-          Switch Interface Theme
+          Switch Theme
         </button>
       </div>
     </aside>
 
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <div class="flex-1 flex flex-col overflow-hidden min-w-0">
       <header
-        class="h-20 border-b border-[var(--border-system)] ios-blur-header flex items-center justify-between px-8 z-20">
-        <div class="flex items-center gap-4">
-          <h2 id="desktop-view-title" class="text-xl font-extrabold tracking-tight">System Initialization</h2>
+        class="h-20 border-b border-[var(--border-system)] ios-blur-header flex items-center justify-between px-6 md:px-8 z-20 flex-shrink-0">
+        <div class="flex items-center gap-4 min-w-0">
+          <h2 id="desktop-view-title" class="text-xl font-extrabold tracking-tight truncate">System Initialization</h2>
         </div>
         <div id="desktop-realtime-badge"
-          class="px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Cloud Data Safe
+          class="px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-2 flex-shrink-0">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span class="hidden sm:inline">Cloud
+            Data Safe</span>
         </div>
       </header>
 
-      <div id="desktop-view-viewport" class="flex-1 overflow-y-auto p-8 no-scrollbar">
+      <div id="desktop-view-viewport" class="flex-1 overflow-y-auto p-6 md:p-8 no-scrollbar">
       </div>
     </div>
   </div>
@@ -293,10 +502,10 @@
 
   <div id="mobile-app-shell" class="flex lg:hidden h-full w-full flex-col overflow-hidden">
     <header
-      class="ios-blur-header border-b border-[var(--border-system)] pt-12 pb-4 px-5 fixed top-0 left-0 right-0 z-30 flex flex-col gap-3">
+      class="ios-blur-header border-b border-[var(--border-system)] pt-[calc(12px+env(safe-area-inset-top,0px))] pb-3 px-4 fixed top-0 left-0 right-0 z-30 flex flex-col gap-2">
       <div class="flex justify-between items-center">
-        <h1 id="mobile-view-title" class="text-2xl font-black tracking-tight">Workspace</h1>
-        <div class="flex items-center gap-2">
+        <h1 id="mobile-view-title" class="text-xl font-black tracking-tight">Workspace</h1>
+        <div class="flex items-center gap-1.5">
           <button onclick="masterThemeToggler()"
             class="p-2.5 rounded-full bg-[var(--border-system)] text-[var(--text-primary)] transition-all">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -315,300 +524,321 @@
       </div>
     </header>
 
-    <div id="mobile-view-viewport" class="flex-1 overflow-y-auto pt-36 pb-24 px-4 no-scrollbar">
+    <div id="mobile-view-viewport" class="flex-1 overflow-y-auto pt-[calc(100px+env(safe-area-inset-top,0px))] pb-[calc(72px+env(safe-area-inset-bottom,0px))] px-4 no-scrollbar">
     </div>
 
     <nav
-      class="ios-blur-header border-t border-[var(--border-system)] h-20 fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around pb-4">
+      class="ios-blur-header border-t border-[var(--border-system)] h-[calc(64px+env(safe-area-inset-bottom,0px))] fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around pb-[env(safe-area-inset-bottom,0px)] pt-2">
       <button onclick="switchView('dashboard')"
-        class="m-nav-btn flex flex-col items-center justify-center text-ios-gray transition-all" data-nav="dashboard">
-        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        class="m-nav-btn flex flex-col items-center justify-center text-ios-gray transition-all px-2" data-nav="dashboard">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
           <path
             d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z">
           </path>
         </svg>
-        <span class="text-[9px] font-bold uppercase tracking-wider">Dashboard</span>
+        <span class="text-[8px] font-bold uppercase tracking-wider mt-0.5">Dash</span>
       </button>
       <button onclick="switchView('documents')"
-        class="m-nav-btn flex flex-col items-center justify-center text-ios-gray transition-all" data-nav="documents">
-        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        class="m-nav-btn flex flex-col items-center justify-center text-ios-gray transition-all px-2" data-nav="documents">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
           <path
             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
           </path>
         </svg>
-        <span class="text-[9px] font-bold uppercase tracking-wider">Documents</span>
+        <span class="text-[8px] font-bold uppercase tracking-wider mt-0.5">Docs</span>
       </button>
       <button onclick="switchView('reports')"
-        class="m-nav-btn flex flex-col items-center justify-center text-ios-gray transition-all" data-nav="reports">
-        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        class="m-nav-btn flex flex-col items-center justify-center text-ios-gray transition-all px-2" data-nav="reports">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
           <path
             d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
           </path>
         </svg>
-        <span class="text-[9px] font-bold uppercase tracking-wider">Analytics</span>
+        <span class="text-[8px] font-bold uppercase tracking-wider mt-0.5">Reports</span>
       </button>
       <button onclick="switchView('companies')"
-        class="m-nav-btn flex flex-col items-center justify-center text-ios-gray transition-all" data-nav="companies">
-        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        class="m-nav-btn flex flex-col items-center justify-center text-ios-gray transition-all px-2" data-nav="companies">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
           <path
             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
           </path>
         </svg>
-        <span class="text-[9px] font-bold uppercase tracking-wider">Nodes</span>
+        <span class="text-[8px] font-bold uppercase tracking-wider mt-0.5">Co</span>
       </button>
     </nav>
   </div>
 
 
   <div id="universalSheetModal"
-    class="fixed inset-0 bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm flex items-center justify-center z-50 p-3">
+    class="fixed inset-0 bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-3">
     <div id="sheetContentFrame"
       class="bg-[var(--bg-card)] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl scale-95 translate-y-4 transition-all duration-300 border border-[var(--border-system)]">
-      <div class="px-6 py-4 border-b border-[var(--border-system)] ios-blur-header flex items-center justify-between">
-        <h3 id="universalSheetTitle" class="text-base font-bold tracking-tight text-ios-blue">Form Action Matrix</h3>
+      <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-[var(--border-system)] ios-blur-header flex items-center justify-between flex-shrink-0">
+        <h3 id="universalSheetTitle" class="text-sm sm:text-base font-bold tracking-tight text-ios-blue truncate">Form
+          Action</h3>
         <button onclick="closeUniversalSheet()"
-          class="h-7 w-7 rounded-full bg-[var(--bg-system)] text-[var(--text-primary)] font-bold text-sm flex items-center justify-center hover:bg-[var(--border-system)] transition-all">×</button>
+          class="h-7 w-7 rounded-full bg-[var(--bg-system)] text-[var(--text-primary)] font-bold text-sm flex items-center justify-center hover:bg-[var(--border-system)] transition-all flex-shrink-0">×</button>
       </div>
-      <div id="universalSheetPayload" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar"></div>
+      <div id="universalSheetPayload" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 no-scrollbar">
+      </div>
     </div>
   </div>
 
 
   <script>
-      (() => {
-        // Internal Local Encapsulated Crypt-Safe Keys
-        const STORAGE_COMPANIES_KEY = 'bf_premium_companies_v2';
-        const STORAGE_DOCUMENTS_KEY = 'bf_premium_documents_v2';
+    (() => {
+      // Internal Local Encapsulated Crypt-Safe Keys
+      const STORAGE_COMPANIES_KEY = 'bf_premium_companies_v2';
+      const STORAGE_DOCUMENTS_KEY = 'bf_premium_documents_v2';
 
-        // Core Runtime Reactive Memory Map State
-        let state = {
-          companies: JSON.parse(localStorage.getItem(STORAGE_COMPANIES_KEY) || '[]'),
-          documents: JSON.parse(localStorage.getItem(STORAGE_DOCUMENTS_KEY) || '[]'),
-          activeCompanyId: null,
-          activeWorkspaceView: 'dashboard',
-          editingTargetId: null
+      // Core Runtime Reactive Memory Map State
+      let state = {
+        companies: JSON.parse(localStorage.getItem(STORAGE_COMPANIES_KEY) || '[]'),
+        documents: JSON.parse(localStorage.getItem(STORAGE_DOCUMENTS_KEY) || '[]'),
+        activeCompanyId: null,
+        activeWorkspaceView: 'dashboard',
+        editingTargetId: null
+      };
+
+      // Ensure data initialization mapping vectors exist
+      if (state.companies.length > 0) {
+        state.activeCompanyId = state.companies[0].id;
+      }
+
+      // Format Engine Methods
+      const formatZAR = n => 'R ' + (n || 0).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const sanitizeHtmlString = t => String(t || '').replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;',
+        '"': '&quot;' })[m]);
+
+      // Compute Financial Metrics Vector System
+      const computeDocumentFinancials = (items, useVat) => {
+        const subtotal = (items || []).reduce((acc, current) => acc + ((current.qty || 0) * (current.price || 0)), 0);
+        const vatVal = useVat ? subtotal * 0.15 : 0;
+        return { subtotal, vat: vatVal, total: subtotal + vatVal };
+      };
+
+      // Persist State to Local Storage Engine Safely
+      const commitStateToStorage = () => {
+        localStorage.setItem(STORAGE_COMPANIES_KEY, JSON.stringify(state.companies));
+        localStorage.setItem(STORAGE_DOCUMENTS_KEY, JSON.stringify(state.documents));
+      };
+
+      // Get Document Array Ref Filtered by Active Corporate Context
+      const getActiveContextDocuments = () => state.documents.filter(d => d.companyId === state.activeCompanyId);
+
+      // System Navigation Interface Controller View Switcher
+      window.switchView = (viewKey) => {
+        state.activeWorkspaceView = viewKey;
+
+        // Compute Visual Hierarchy Titles Based on Context mapping
+        const titleMap = {
+          dashboard: "Business Dashboard",
+          documents: "Invoice & Quote Management",
+          reports: "BI & Financial Analytics",
+          companies: "Company Management"
         };
 
-        // Ensure data initialization mapping vectors exist
-        if (state.companies.length > 0) {
-          state.activeCompanyId = state.companies[0].id;
-        }
+        // Update Desktop and Mobile View Titles
+        const formattedTitle = titleMap[viewKey] || "Enterprise Workspace";
+        const titleEl = document.getElementById('desktop-view-title');
+        if (titleEl) titleEl.textContent = formattedTitle;
+        const mobileTitle = document.getElementById('mobile-view-title');
+        if (mobileTitle) mobileTitle.textContent = formattedTitle.split(' ')[0] || "Workspace";
 
-        // Format Engine Methods
-        const formatZAR = n => 'R ' + (n || 0).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        const sanitizeHtmlString = t => String(t || '').replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[m]);
+        // Toggle Styling indicators on Desktop Navigation
+        document.querySelectorAll('.d-nav-btn').forEach(btn => {
+          if (btn.getAttribute('data-nav') === viewKey) {
+            btn.classList.add('desktop-nav-active');
+            btn.classList.remove('text-ios-gray');
+          } else {
+            btn.classList.remove('desktop-nav-active');
+            btn.classList.add('text-ios-gray');
+          }
+        });
 
-        // Compute Financial Metrics Vector System
-        const computeDocumentFinancials = (items, useVat) => {
-          const subtotal = (items || []).reduce((acc, current) => acc + ((current.qty || 0) * (current.price || 0)), 0);
-          const vatVal = useVat ? subtotal * 0.15 : 0;
-          return { subtotal, vat: vatVal, total: subtotal + vatVal };
-        };
+        // Toggle Styling indicators on Mobile Navigation Bar
+        document.querySelectorAll('.m-nav-btn').forEach(btn => {
+          if (btn.getAttribute('data-nav') === viewKey) {
+            btn.classList.add('mobile-nav-active');
+          } else {
+            btn.classList.remove('mobile-nav-active');
+          }
+        });
 
-        // Persist State to Local Storage Engine Safely
-        const commitStateToStorage = () => {
-          localStorage.setItem(STORAGE_COMPANIES_KEY, JSON.stringify(state.companies));
-          localStorage.setItem(STORAGE_DOCUMENTS_KEY, JSON.stringify(state.documents));
-        };
+        // Trigger Sub-View Generator Rendering Engines
+        renderActiveViewportData();
+      };
 
-        // Get Document Array Ref Filtered by Active Corporate Context
-        const getActiveContextDocuments = () => state.documents.filter(d => d.companyId === state.activeCompanyId);
+      // Sync Selector Syncing Loops across screens
+      const syncDropdownSelectors = () => {
+        const buildOptions = () => state.companies.map(c =>
+          `<option value="${c.id}">${sanitizeHtmlString(c.name)}</option>`).join('') ||
+          `<option value="">No Active Nodes Found</option>`;
 
-        // System Navigation Interface Controller View Switcher
-        window.switchView = (viewKey) => {
-          state.activeWorkspaceView = viewKey;
+        const dSelect = document.getElementById('desktopCompanySelect');
+        const mSelect = document.getElementById('mobileCompanySelect');
 
-          // Compute Visual Hierarchy Titles Based on Context mapping
-          const titleMap = {
-            dashboard: "Business Dashboard",
-            documents: "Invoice & Quote Management",
-            reports: "BI & Financial Analytics",
-            companies: "Company Management"
-          };
-
-          // Update Desktop and Mobile View Titles
-          const formattedTitle = titleMap[viewKey] || "Enterprise Workspace";
-          document.getElementById('desktop-view-title').textContent = formattedTitle;
-          document.getElementById('mobile-view-title').textContent = formattedTitle.split(' ')[0];
-
-          // Toggle Styling indicators on Desktop Navigation
-          document.querySelectorAll('.d-nav-btn').forEach(btn => {
-            if (btn.getAttribute('data-nav') === viewKey) {
-              btn.classList.add('desktop-nav-active');
-              btn.classList.remove('text-ios-gray');
-            } else {
-              btn.classList.remove('desktop-nav-active');
-              btn.classList.add('text-ios-gray');
-            }
-          });
-
-          // Toggle Styling indicators on Mobile Navigation Bar
-          document.querySelectorAll('.m-nav-btn').forEach(btn => {
-            if (btn.getAttribute('data-nav') === viewKey) {
-              btn.classList.add('mobile-nav-active');
-            } else {
-              btn.classList.remove('mobile-nav-active');
-            }
-          });
-
-          // Trigger Sub-View Generator Rendering Engines
-          renderActiveViewportData();
-        };
-
-        // Sync Selector Syncing Loops across screens
-        const syncDropdownSelectors = () => {
-          const buildOptions = () => state.companies.map(c => `<option value="${c.id}">${sanitizeHtmlString(c.name)}</option>`).join('') || `<option value="">No Active Nodes Found</option>`;
-
-          const dSelect = document.getElementById('desktopCompanySelect');
-          const mSelect = document.getElementById('mobileCompanySelect');
-
+        if (dSelect) {
           dSelect.innerHTML = buildOptions();
-          mSelect.innerHTML = buildOptions();
-
           dSelect.value = state.activeCompanyId || '';
+        }
+        if (mSelect) {
+          mSelect.innerHTML = buildOptions();
           mSelect.value = state.activeCompanyId || '';
-        };
+        }
+      };
 
-        // Direct Event Hook Updaters
-        document.getElementById('desktopCompanySelect').onchange = (e) => { state.activeCompanyId = e.target.value; syncDropdownSelectors(); renderActiveViewportData(); };
-        document.getElementById('mobileCompanySelect').onchange = (e) => { state.activeCompanyId = e.target.value; syncDropdownSelectors(); renderActiveViewportData(); };
+      // Direct Event Hook Updaters
+      const dSelect = document.getElementById('desktopCompanySelect');
+      const mSelect = document.getElementById('mobileCompanySelect');
+      if (dSelect) dSelect.onchange = (e) => { state.activeCompanyId = e.target.value;
+        syncDropdownSelectors();
+        renderActiveViewportData(); };
+      if (mSelect) mSelect.onchange = (e) => { state.activeCompanyId = e.target.value;
+        syncDropdownSelectors();
+        renderActiveViewportData(); };
 
-        // =========================================================================
-        // RENDERING ENGINE ROUTING HUB
-        // =========================================================================
-        const renderActiveViewportData = () => {
-          const activeView = state.activeWorkspaceView;
-          let htmlPayload = ``;
+      // =========================================================================
+      // RENDERING ENGINE ROUTING HUB
+      // =========================================================================
+      const renderActiveViewportData = () => {
+        const activeView = state.activeWorkspaceView;
+        let htmlPayload = ``;
 
-          if (!state.activeCompanyId && activeView !== 'companies') {
-            htmlPayload = `
-            <div class="flex flex-col items-center justify-center py-20 text-center space-y-4">
+        if (!state.activeCompanyId && activeView !== 'companies') {
+          htmlPayload = `
+            <div class="flex flex-col items-center justify-center py-12 sm:py-20 text-center space-y-4">
               <div class="w-16 h-16 rounded-full bg-ios-orange/10 text-ios-orange flex items-center justify-center text-2xl font-bold animate-bounce">⚠️</div>
-              <h3 class="text-lg font-bold">No Active Company Selected</h3>
-              <p class="text-xs text-ios-gray max-w-sm">Please initialize a company entity inside the Companies workspace before managing operations.</p>
+              <h3 class="text-base sm:text-lg font-bold">No Active Company Selected</h3>
+              <p class="text-xs text-ios-gray max-w-sm px-4">Please add a company in the Companies section before you start.</p>
               <button onclick="switchView('companies')" class="bg-ios-blue text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md">Setup Company</button>
             </div>`;
-            document.getElementById('desktop-view-viewport').innerHTML = htmlPayload;
-            document.getElementById('mobile-view-viewport').innerHTML = htmlPayload;
-            return;
-          }
+          const desktopView = document.getElementById('desktop-view-viewport');
+          const mobileView = document.getElementById('mobile-view-viewport');
+          if (desktopView) desktopView.innerHTML = htmlPayload;
+          if (mobileView) mobileView.innerHTML = htmlPayload;
+          return;
+        }
 
-          switch (activeView) {
-            case 'dashboard':
-              renderDashboardWorkspace();
-              break;
-            case 'documents':
-              renderDocumentsWorkspace();
-              break;
-            case 'reports':
-              renderReportsWorkspace();
-              break;
-            case 'companies':
-              renderCompaniesWorkspace();
-              break;
-          }
-        };
+        switch (activeView) {
+          case 'dashboard':
+            renderDashboardWorkspace();
+            break;
+          case 'documents':
+            renderDocumentsWorkspace();
+            break;
+          case 'reports':
+            renderReportsWorkspace();
+            break;
+          case 'companies':
+            renderCompaniesWorkspace();
+            break;
+        }
+      };
 
-        // =========================================================================
-        // EXECUTIVE CORE MATRIX (DASHBOARD) DESIGN & IMPLEMENTATION
-        // =========================================================================
-        const renderDashboardWorkspace = () => {
-          const docs = getActiveContextDocuments();
+      // =========================================================================
+      // EXECUTIVE CORE MATRIX (DASHBOARD) DESIGN & IMPLEMENTATION
+      // =========================================================================
+      const renderDashboardWorkspace = () => {
+        const docs = getActiveContextDocuments();
 
-          // CRITICAL UPDATE SPECIFICATION:
-          // Realized Earnings (Invoices) vs Pipeline Futures (Quotes)
-          const totalPaidRealized = docs.filter(d => d.type === 'invoice' && d.isPaid).reduce((acc, d) => acc + computeDocumentFinancials(d.items, d.useVat).total, 0);
-          const totalOutstandingInvoiced = docs.filter(d => d.type === 'invoice' && !d.isPaid).reduce((acc, d) => acc + computeDocumentFinancials(d.items, d.useVat).total, 0);
+        // CRITICAL UPDATE SPECIFICATION:
+        // Realized Earnings (Invoices) vs Pipeline Futures (Quotes)
+        const totalPaidRealized = docs.filter(d => d.type === 'invoice' && d.isPaid).reduce((acc, d) => acc +
+          computeDocumentFinancials(d.items, d.useVat).total, 0);
+        const totalOutstandingInvoiced = docs.filter(d => d.type === 'invoice' && !d.isPaid).reduce((acc, d) => acc +
+          computeDocumentFinancials(d.items, d.useVat).total, 0);
 
-          // Active pipeline calculations (Unconverted quotes represent theoretical monies to be made)
-          const uncalculatedPipelineQuotes = docs.filter(d => d.type === 'quote' && !d.isConverted).reduce((acc, d) => acc + computeDocumentFinancials(d.items, d.useVat).total, 0);
+        // Active pipeline calculations (Unconverted quotes represent theoretical monies to be made)
+        const uncalculatedPipelineQuotes = docs.filter(d => d.type === 'quote' && !d.isConverted).reduce((acc, d) => acc +
+          computeDocumentFinancials(d.items, d.useVat).total, 0);
 
-          // Combined data loop processing
-          const recentQuotes = docs.filter(d => d.type === 'quote').slice(-4).reverse();
-          const pendingInvoices = docs.filter(d => d.type === 'invoice' && !d.isPaid).slice(-4).reverse();
+        // Combined data loop processing
+        const recentQuotes = docs.filter(d => d.type === 'quote').slice(-4).reverse();
+        const pendingInvoices = docs.filter(d => d.type === 'invoice' && !d.isPaid).slice(-4).reverse();
 
-          const layoutHtml = `
-          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-            <div class="ios-card p-5 flex flex-col justify-between space-y-2">
+        const layoutHtml = `
+          <div class="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
+            <div class="ios-card stat-card flex flex-col justify-between space-y-1">
               <div>
-                <p class="text-[10px] font-bold text-ios-green tracking-wider uppercase">Revenue</p>
-                <h3 class="text-xl font-extrabold tracking-tight mt-1 text-emerald-500">${formatZAR(totalPaidRealized)}</h3>
+                <p class="text-[9px] sm:text-[10px] font-bold text-ios-green tracking-wider uppercase">Revenue</p>
+                <h3 class="text-base sm:text-xl font-extrabold tracking-tight mt-1 text-emerald-500">${formatZAR(totalPaidRealized)}</h3>
               </div>
-              <span class="text-[9px] font-medium text-ios-gray">Settled Invoice Liquidity</span>
+              <span class="text-[8px] sm:text-[9px] font-medium text-ios-gray truncate">Settled Invoice</span>
             </div>
-            <div class="ios-card p-5 flex flex-col justify-between space-y-2">
+            <div class="ios-card stat-card flex flex-col justify-between space-y-1">
               <div>
-                <p class="text-[10px] font-bold text-ios-blue tracking-wider uppercase">Outstanding Invoices</p>
-                <h3 class="text-xl font-extrabold tracking-tight mt-1 text-ios-blue">${formatZAR(totalOutstandingInvoiced)}</h3>
+                <p class="text-[9px] sm:text-[10px] font-bold text-ios-blue tracking-wider uppercase">Outstanding</p>
+                <h3 class="text-base sm:text-xl font-extrabold tracking-tight mt-1 text-ios-blue">${formatZAR(totalOutstandingInvoiced)}</h3>
               </div>
-              <span class="text-[9px] font-medium text-ios-gray">Arrears Awaiting Settlement</span>
+              <span class="text-[8px] sm:text-[9px] font-medium text-ios-gray truncate">Arrears Awaiting</span>
             </div>
-            <div class="ios-card p-5 flex flex-col justify-between space-y-2">
+            <div class="ios-card stat-card flex flex-col justify-between space-y-1">
               <div>
-                <p class="text-[10px] font-bold text-ios-purple tracking-wider uppercase">Pipeline Monies</p>
-                <h3 class="text-xl font-extrabold tracking-tight mt-1 text-ios-purple">${formatZAR(uncalculatedPipelineQuotes)}</h3>
+                <p class="text-[9px] sm:text-[10px] font-bold text-ios-purple tracking-wider uppercase">Pipeline</p>
+                <h3 class="text-base sm:text-xl font-extrabold tracking-tight mt-1 text-ios-purple">${formatZAR(uncalculatedPipelineQuotes)}</h3>
               </div>
-              <span class="text-[9px] font-medium text-ios-gray">Quotes Uncalculated in Analytics</span>
+              <span class="text-[8px] sm:text-[9px] font-medium text-ios-gray truncate">Quotes</span>
             </div>
-            <div class="ios-card p-5 flex flex-col justify-between space-y-2">
+            <div class="ios-card stat-card flex flex-col justify-between space-y-1">
               <div>
-                <p class="text-[10px] font-bold text-ios-gray tracking-wider uppercase">Transactions</p>
-                <h3 class="text-xl font-extrabold tracking-tight mt-1">${docs.length} <span class="text-xs font-semibold text-ios-gray">files</span></h3>
+                <p class="text-[9px] sm:text-[10px] font-bold text-ios-gray tracking-wider uppercase">Transactions</p>
+                <h3 class="text-base sm:text-xl font-extrabold tracking-tight mt-1">${docs.length} <span class="text-xs font-semibold text-ios-gray">files</span></h3>
               </div>
-              <span class="text-[9px] font-medium text-ios-gray">Total Processed Transactions</span>
+              <span class="text-[8px] sm:text-[9px] font-medium text-ios-gray truncate">Total Processed</span>
             </div>
           </div>
 
-          <div class="ios-card p-6 mb-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-6">
+          <div class="ios-card p-4 sm:p-6 mb-5 sm:mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 sm:mb-6">
               <div>
-                <h4 class="text-xs font-bold uppercase tracking-wider text-ios-gray">Apex Vector Micro-Chart</h4>
-                <p class="text-xs text-[var(--text-primary)] font-semibold">Realized Cashflow Streams (Invoices Rendered)</p>
+                <h4 class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ios-gray">Apex Vector Micro-Chart</h4>
+                <p class="text-[11px] sm:text-xs text-[var(--text-primary)] font-semibold">Realized Cashflow Streams</p>
               </div>
-              <div class="flex items-center gap-4 text-[10px] font-bold">
-                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-ios-blue"></span> Scaled Invoice Metrics</div>
+              <div class="flex items-center gap-3 text-[9px] sm:text-[10px] font-bold">
+                <div class="flex items-center gap-1.5"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-ios-blue"></span> Scaled Metrics</div>
               </div>
             </div>
             
-            <div class="h-44 w-full flex items-end gap-2.5 pt-4 border-b border-[var(--border-system)]" id="apexChartRenderTrack">
+            <div class="h-32 sm:h-44 w-full flex items-end gap-1.5 sm:gap-2.5 pt-3 sm:pt-4 border-b border-[var(--border-system)]" id="apexChartRenderTrack">
               </div>
           </div>
 
-          <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            <div class="ios-card p-5">
-              <div class="flex justify-between items-center mb-4 pb-2 border-b border-[var(--border-system)]">
-                <h5 class="text-xs font-bold uppercase tracking-wider text-ios-gray">Recent Pipeline Estimates (Quotes)</h5>
-                <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-ios-orange/10 text-ios-orange">Awaiting Action</span>
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+            <div class="ios-card p-4 sm:p-5">
+              <div class="flex justify-between items-center mb-3 pb-2 border-b border-[var(--border-system)]">
+                <h5 class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ios-gray">Recent Pipeline (Quotes)</h5>
+                <span class="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-ios-orange/10 text-ios-orange">Awaiting</span>
               </div>
-              <div class="space-y-2">
+              <div class="space-y-1.5">
                 ${recentQuotes.map(q => `
-                  <div class="flex justify-between items-center text-xs py-2 px-3 rounded-lg bg-[var(--bg-system)]">
-                    <div>
-                      <p class="font-bold">${sanitizeHtmlString(q.clientName)}</p>
-                      <p class="text-[10px] text-ios-gray mt-0.5">${q.documentNumber} • ${q.executionDate}</p>
+                  <div class="flex justify-between items-center text-xs py-1.5 px-2 sm:px-3 rounded-lg bg-[var(--bg-system)] gap-2">
+                    <div class="min-w-0 flex-1">
+                      <p class="font-bold text-[11px] sm:text-xs truncate">${sanitizeHtmlString(q.clientName)}</p>
+                      <p class="text-[9px] sm:text-[10px] text-ios-gray mt-0.5 truncate">${q.documentNumber} • ${q.executionDate}</p>
                     </div>
-                    <div class="text-right">
-                      <p class="font-bold text-ios-purple">${formatZAR(computeDocumentFinancials(q.items, q.useVat).total)}</p>
-                      <span class="text-[9px] text-ios-gray italic">${q.isConverted ? 'Converted to Inv' : 'Theoretical Pipeline'}</span>
+                    <div class="text-right flex-shrink-0">
+                      <p class="font-bold text-ios-purple text-[11px] sm:text-xs">${formatZAR(computeDocumentFinancials(q.items, q.useVat).total)}</p>
+                      <span class="text-[8px] sm:text-[9px] text-ios-gray italic">${q.isConverted ? 'Converted' : 'Pipeline'}</span>
                     </div>
                   </div>
                 `).join('') || '<p class="text-xs text-ios-gray text-center py-4">No active pipeline objects found.</p>'}
               </div>
             </div>
 
-            <div class="ios-card p-5">
-              <div class="flex justify-between items-center mb-4 pb-2 border-b border-[var(--border-system)]">
-                <h5 class="text-xs font-bold uppercase tracking-wider text-ios-gray">Active Accounts Receivable (Pending)</h5>
-                <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-ios-blue/10 text-ios-blue">Awaiting Settlement</span>
+            <div class="ios-card p-4 sm:p-5">
+              <div class="flex justify-between items-center mb-3 pb-2 border-b border-[var(--border-system)]">
+                <h5 class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ios-gray">Accounts Receivable (Pending)</h5>
+                <span class="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-ios-blue/10 text-ios-blue">Awaiting</span>
               </div>
-              <div class="space-y-2">
+              <div class="space-y-1.5">
                 ${pendingInvoices.map(i => `
-                  <div class="flex justify-between items-center text-xs py-2 px-3 rounded-lg bg-[var(--bg-system)]">
-                    <div>
-                      <p class="font-bold">${sanitizeHtmlString(i.clientName)}</p>
-                      <p class="text-[10px] text-ios-gray mt-0.5">${i.documentNumber} • Due ${i.dueDate || 'N/A'}</p>
+                  <div class="flex justify-between items-center text-xs py-1.5 px-2 sm:px-3 rounded-lg bg-[var(--bg-system)] gap-2">
+                    <div class="min-w-0 flex-1">
+                      <p class="font-bold text-[11px] sm:text-xs truncate">${sanitizeHtmlString(i.clientName)}</p>
+                      <p class="text-[9px] sm:text-[10px] text-ios-gray mt-0.5 truncate">${i.documentNumber} • Due ${i.dueDate || 'N/A'}</p>
                     </div>
-                    <p class="font-bold text-ios-red">${formatZAR(computeDocumentFinancials(i.items, i.useVat).total)}</p>
+                    <p class="font-bold text-ios-red text-[11px] sm:text-xs flex-shrink-0">${formatZAR(computeDocumentFinancials(i.items, i.useVat).total)}</p>
                   </div>
                 `).join('') || '<p class="text-xs text-ios-gray text-center py-4">No pending receivable nodes registered.</p>'}
               </div>
@@ -616,520 +846,559 @@
           </div>
         `;
 
-          document.getElementById('desktop-view-viewport').innerHTML = layoutHtml;
-          document.getElementById('mobile-view-viewport').innerHTML = layoutHtml;
+        const desktopView = document.getElementById('desktop-view-viewport');
+        const mobileView = document.getElementById('mobile-view-viewport');
+        if (desktopView) desktopView.innerHTML = layoutHtml;
+        if (mobileView) mobileView.innerHTML = layoutHtml;
 
-          // Populate dynamic graph track vectors
-          const invoiceDocumentsList = docs.filter(d => d.type === 'invoice');
-          const maxVal = Math.max(...invoiceDocumentsList.map(d => computeDocumentFinancials(d.items, d.useVat).total), 1);
+        // Populate dynamic graph track vectors
+        const invoiceDocumentsList = docs.filter(d => d.type === 'invoice');
+        const maxVal = Math.max(...invoiceDocumentsList.map(d => computeDocumentFinancials(d.items, d.useVat).total), 1);
 
-          const graphTracks = document.querySelectorAll('#apexChartRenderTrack');
-          graphTracks.forEach(trackContainer => {
-            if (invoiceDocumentsList.length === 0) {
-              trackContainer.innerHTML = `<div class="w-full h-full flex items-center justify-center text-xs text-ios-gray italic">No invoice analytics matrices available to display.</div>`;
-              return;
-            }
+        const graphTracks = document.querySelectorAll('#apexChartRenderTrack');
+        graphTracks.forEach(trackContainer => {
+          if (invoiceDocumentsList.length === 0) {
+            trackContainer.innerHTML =
+              `<div class="w-full h-full flex items-center justify-center text-xs text-ios-gray italic">No invoice analytics matrices available to display.</div>`;
+            return;
+          }
 
-            trackContainer.innerHTML = invoiceDocumentsList.slice(-14).map(d => {
-              const calculatedTotal = computeDocumentFinancials(d.items, d.useVat).total;
-              const percentageHeight = (calculatedTotal / maxVal) * 100;
-              const absoluteBarColor = d.isPaid ? 'bg-ios-green' : 'bg-ios-blue';
-
-              return `
-              <div class="flex-1 h-full flex flex-col justify-end items-center relative group apex-interactive-node cursor-pointer">
-                <div class="apex-tooltip absolute bottom-full mb-2 bg-slate-900 text-white text-[10px] font-bold p-2 rounded-lg shadow-xl z-40 pointer-events-none whitespace-nowrap">
-                  <p class="text-white">${sanitizeHtmlString(d.clientName)}</p>
-                  <p class="text-ios-teal font-extrabold mt-0.5">${formatZAR(calculatedTotal)}</p>
-                  <p class="text-[8px] text-slate-400 mt-0.5">${d.isPaid ? 'Settled Liquid Asset' : 'Unpaid Liability'}</p>
-                </div>
-                
-                <div class="w-full ${absoluteBarColor} rounded-t-md opacity-85 group-hover:opacity-100 transition-all apex-bar-fill" style="height: 0.5%; min-height: 4px;" data-target-height="${Math.max(percentageHeight, 4)}"></div>
-                
-                <span class="text-[8px] font-bold text-ios-gray mt-1.5 tracking-tighter truncate max-w-full">${d.documentNumber.slice(-4)}</span>
-              </div>
-            `;
-            }).join('');
-          });
-
-          // Trigger safe deferred UI layout paint height animation calculations
-          setTimeout(() => {
-            document.querySelectorAll('.apex-bar-fill').forEach(bar => {
-              const h = bar.getAttribute('data-target-height');
-              bar.style.height = h + '%';
-            });
-          }, 60);
-        };
-
-        // =========================================================================
-        // HYPER-LEDGER DOCUMENT ENGINE WORKSPACE
-        // =========================================================================
-        const renderDocumentsWorkspace = () => {
-          const docs = getActiveContextDocuments().sort((a, b) => new Date(b.createdTimestamp) - new Date(a.createdTimestamp));
-
-          let subGridHtml = docs.map(d => {
-            const financialData = computeDocumentFinancials(d.items, d.useVat);
-            const isQuote = d.type === 'quote';
-
-            let actionControlBadge = ``;
-            if (isQuote) {
-              actionControlBadge = d.isConverted
-                ? `<span class="px-2.5 py-0.5 rounded-full text-[9px] font-extrabold bg-neutral-500/10 text-neutral-500 border border-neutral-500/20">Converted to Invoice</span>`
-                : `<span class="px-2.5 py-0.5 rounded-full text-[9px] font-extrabold bg-ios-orange/10 text-ios-orange border border-ios-orange/20">Pipeline Quote</span>`;
-            } else {
-              actionControlBadge = d.isPaid
-                ? `<span class="px-2.5 py-0.5 rounded-full text-[9px] font-extrabold bg-ios-green/10 text-ios-green border border-ios-green/20">Paid</span>`
-                : `<span class="px-2.5 py-0.5 rounded-full text-[9px] font-extrabold bg-ios-red/10 text-ios-red border border-ios-red/20">Arrears Outstanding</span>`;
-            }
+          trackContainer.innerHTML = invoiceDocumentsList.slice(-14).map(d => {
+            const calculatedTotal = computeDocumentFinancials(d.items, d.useVat).total;
+            const percentageHeight = (calculatedTotal / maxVal) * 100;
+            const absoluteBarColor = d.isPaid ? 'bg-ios-green' : 'bg-ios-blue';
 
             return `
-            <div class="ios-card p-5 flex flex-col justify-between space-y-4">
+              <div class="flex-1 h-full flex flex-col justify-end items-center relative group apex-interactive-node cursor-pointer min-w-[12px]">
+                <div class="apex-tooltip absolute bottom-full mb-2 bg-slate-900 text-white text-[9px] sm:text-[10px] font-bold p-1.5 sm:p-2 rounded-lg shadow-xl z-40 pointer-events-none whitespace-nowrap">
+                  <p class="text-white">${sanitizeHtmlString(d.clientName)}</p>
+                  <p class="text-ios-teal font-extrabold mt-0.5">${formatZAR(calculatedTotal)}</p>
+                  <p class="text-[7px] sm:text-[8px] text-slate-400 mt-0.5">${d.isPaid ? 'Settled' : 'Unpaid'}</p>
+                </div>
+                
+                <div class="w-full ${absoluteBarColor} rounded-t-md opacity-85 group-hover:opacity-100 transition-all apex-bar-fill" style="height: 0.5%; min-height: 3px;" data-target-height="${Math.max(percentageHeight, 4)}"></div>
+                
+                <span class="text-[6px] sm:text-[8px] font-bold text-ios-gray mt-1 tracking-tighter truncate max-w-full">${d.documentNumber.slice(-4)}</span>
+              </div>
+            `;
+          }).join('');
+        });
+
+        // Trigger safe deferred UI layout paint height animation calculations
+        setTimeout(() => {
+          document.querySelectorAll('.apex-bar-fill').forEach(bar => {
+            const h = bar.getAttribute('data-target-height');
+            bar.style.height = h + '%';
+          });
+        }, 60);
+      };
+
+      // =========================================================================
+      // HYPER-LEDGER DOCUMENT ENGINE WORKSPACE
+      // =========================================================================
+      const renderDocumentsWorkspace = () => {
+        const docs = getActiveContextDocuments().sort((a, b) => new Date(b.createdTimestamp) - new Date(a.createdTimestamp));
+
+        let subGridHtml = docs.map(d => {
+          const financialData = computeDocumentFinancials(d.items, d.useVat);
+          const isQuote = d.type === 'quote';
+
+          let actionControlBadge = ``;
+          if (isQuote) {
+            actionControlBadge = d.isConverted ?
+              `<span class="px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-extrabold bg-neutral-500/10 text-neutral-500 border border-neutral-500/20">Converted</span>` :
+              `<span class="px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-extrabold bg-ios-orange/10 text-ios-orange border border-ios-orange/20">Pipeline</span>`;
+          } else {
+            actionControlBadge = d.isPaid ?
+              `<span class="px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-extrabold bg-ios-green/10 text-ios-green border border-ios-green/20">Paid</span>` :
+              `<span class="px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-extrabold bg-ios-red/10 text-ios-red border border-ios-red/20">Arrears</span>`;
+          }
+
+          return `
+            <div class="ios-card p-4 sm:p-5 flex flex-col justify-between space-y-3">
               <div class="space-y-1">
                 <div class="flex justify-between items-start gap-2">
                   <h4 class="font-bold text-sm tracking-tight truncate flex-1">${sanitizeHtmlString(d.clientName)}</h4>
                   ${actionControlBadge}
                 </div>
-                <p class="text-[10px] font-semibold text-ios-gray tracking-tight">${d.documentNumber} • issued ${d.executionDate}</p>
-                <div class="pt-2">
-                  <p class="text-xs text-ios-gray font-medium">Invoice Value</p>
-                  <p class="text-lg font-black tracking-tight mt-0.5 text-[var(--text-primary)]">${formatZAR(financialData.total)}</p>
+                <p class="text-[9px] sm:text-[10px] font-semibold text-ios-gray tracking-tight truncate">${d.documentNumber} • ${d.executionDate}</p>
+                <div class="pt-1">
+                  <p class="text-[10px] sm:text-xs text-ios-gray font-medium">Invoice Value</p>
+                  <p class="text-base sm:text-lg font-black tracking-tight mt-0.5 text-[var(--text-primary)]">${formatZAR(financialData.total)}</p>
                 </div>
               </div>
 
               <div class="grid grid-cols-2 gap-1 pt-2 border-t border-[var(--border-system)]">
-                <button onclick="editExistingDocument('${d.id}')" class="text-left px-2 py-1.5 text-[11px] font-bold text-ios-blue hover:underline flex items-center gap-1.5">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                <button onclick="editExistingDocument('${d.id}')" class="text-left px-1.5 sm:px-2 py-1.5 text-[10px] sm:text-[11px] font-bold text-ios-blue hover:underline flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
                   Edit
                 </button>
-                <button onclick="duplicateDocumentState('${d.id}')" class="text-left px-2 py-1.5 text-[11px] font-bold text-ios-gray hover:underline flex items-center gap-1.5">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <button onclick="duplicateDocumentState('${d.id}')" class="text-left px-1.5 sm:px-2 py-1.5 text-[10px] sm:text-[11px] font-bold text-ios-gray hover:underline flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                   Clone
                 </button>
-                <button onclick="exportToPDFEngine('${d.id}')" class="text-left px-2 py-1.5 text-[11px] font-bold text-ios-purple hover:underline flex items-center gap-1.5">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <button onclick="exportToPDFEngine('${d.id}')" class="text-left px-1.5 sm:px-2 py-1.5 text-[10px] sm:text-[11px] font-bold text-ios-purple hover:underline flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                   PDF
                 </button>
-                <button onclick="triggerWhatsAppTransmissionLink('${d.id}')" class="text-left px-2 py-1.5 text-[11px] font-bold text-emerald-500 hover:underline flex items-center gap-1.5">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <button onclick="triggerWhatsAppTransmissionLink('${d.id}')" class="text-left px-1.5 sm:px-2 py-1.5 text-[10px] sm:text-[11px] font-bold text-emerald-500 hover:underline flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                   WhatsApp
                 </button>
                 
                 ${isQuote && !d.isConverted ? `
-                  <button onclick="convertQuoteToInvoiceEngine('${d.id}')" class="text-left col-span-2 px-2 py-2 mt-1 rounded bg-ios-green text-white text-[11px] font-extrabold text-center hover:opacity-90 transition-all shadow-sm">⚡ Accept & Convert to Invoice</button>
+                  <button onclick="convertQuoteToInvoiceEngine('${d.id}')" class="text-left col-span-2 px-2 py-2 mt-1 rounded bg-ios-green text-white text-[10px] sm:text-[11px] font-extrabold text-center hover:opacity-90 transition-all shadow-sm">Accept & Convert</button>
                 ` : ''}
 
                 ${!isQuote ? `
-                  <button onclick="togglePaymentStateEngine('${d.id}')" class="text-left col-span-2 px-2 py-1.5 text-[11px] font-extrabold text-center rounded border border-[var(--border-system)] bg-[var(--bg-system)] hover:bg-[var(--border-system)] transition-all">
-                    ${d.isPaid ? 'Mark as Unpaid' : '✓ Finalize Payment Cleared'}
+                  <button onclick="togglePaymentStateEngine('${d.id}')" class="text-left col-span-2 px-2 py-1.5 text-[10px] sm:text-[11px] font-extrabold text-center rounded border border-[var(--border-system)] bg-[var(--bg-system)] hover:bg-[var(--border-system)] transition-all">
+                    ${d.isPaid ? 'Mark as Unpaid' : '✓ Finalize Payment'}
                   </button>
                 ` : ''}
 
-                <button onclick="deleteDocumentFromState('${d.id}')" class="text-left col-span-2 text-center mt-2 text-[9px] font-bold text-ios-red hover:bg-ios-red/5 py-1 rounded transition-all">☠ Delete</button>
+                <button onclick="deleteDocumentFromState('${d.id}')" class="text-left col-span-2 text-center mt-2 text-[8px] sm:text-[9px] font-bold text-ios-red hover:bg-ios-red/5 py-1 rounded transition-all">☠ Delete</button>
               </div>
             </div>
           `;
-          }).join('') || `
-          <div class="col-span-full py-16 text-center space-y-3">
+        }).join('') || `
+          <div class="col-span-full py-12 sm:py-16 text-center space-y-3">
             <p class="text-sm text-ios-gray italic">No ledger entities mapped to this workspace.</p>
-            <button onclick="openNewDocumentForm()" class="bg-ios-blue text-white font-bold px-4 py-2 rounded-xl text-xs shadow">Instantiate First Document</button>
+            <button onclick="openNewDocumentForm()" class="bg-ios-blue text-white font-bold px-4 py-2 rounded-xl text-xs shadow">Create First Document</button>
           </div>
         `;
 
-          const wrapperHtml = `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">${subGridHtml}</div>`;
-          document.getElementById('desktop-view-viewport').innerHTML = wrapperHtml;
-          document.getElementById('mobile-view-viewport').innerHTML = wrapperHtml;
-        };
+        const wrapperHtml = `<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">${subGridHtml}</div>`;
+        const desktopView = document.getElementById('desktop-view-viewport');
+        const mobileView = document.getElementById('mobile-view-viewport');
+        if (desktopView) desktopView.innerHTML = wrapperHtml;
+        if (mobileView) mobileView.innerHTML = wrapperHtml;
+      };
 
-        // =========================================================================
-        // APEX FINANCIAL ANALYSIS INTELLIGENCE (REPORTS)
-        // =========================================================================
-        const renderReportsWorkspace = () => {
-          const docs = getActiveContextDocuments();
-          const paidInvoices = docs.filter(d => d.type === 'invoice' && d.isPaid);
+      // =========================================================================
+      // APEX FINANCIAL ANALYSIS INTELLIGENCE (REPORTS)
+      // =========================================================================
+      const renderReportsWorkspace = () => {
+        const docs = getActiveContextDocuments();
+        const paidInvoices = docs.filter(d => d.type === 'invoice' && d.isPaid);
 
-          const timestampNow = new Date();
-          const relativeWeekDelta = new Date(timestampNow.getTime() - 7 * 24 * 60 * 60 * 1000);
-          const currentMonthBoundary = new Date(timestampNow.getFullYear(), timestampNow.getMonth(), 1);
+        const timestampNow = new Date();
+        const relativeWeekDelta = new Date(timestampNow.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const currentMonthBoundary = new Date(timestampNow.getFullYear(), timestampNow.getMonth(), 1);
 
-          const earnedThisWeek = paidInvoices.filter(d => new Date(d.createdTimestamp) >= relativeWeekDelta).reduce((acc, d) => acc + computeDocumentFinancials(d.items, d.useVat).total, 0);
-          const earnedThisMonth = paidInvoices.filter(d => new Date(d.createdTimestamp) >= currentMonthBoundary).reduce((acc, d) => acc + computeDocumentFinancials(d.items, d.useVat).total, 0);
-          const grandTotalAccrued = paidInvoices.reduce((acc, d) => acc + computeDocumentFinancials(d.items, d.useVat).total, 0);
+        const earnedThisWeek = paidInvoices.filter(d => new Date(d.createdTimestamp) >= relativeWeekDelta).reduce((acc,
+          d) => acc + computeDocumentFinancials(d.items, d.useVat).total, 0);
+        const earnedThisMonth = paidInvoices.filter(d => new Date(d.createdTimestamp) >= currentMonthBoundary).reduce((acc,
+          d) => acc + computeDocumentFinancials(d.items, d.useVat).total, 0);
+        const grandTotalAccrued = paidInvoices.reduce((acc, d) => acc + computeDocumentFinancials(d.items, d.useVat)
+        .total, 0);
 
-          const viewHtml = `
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div class="ios-card p-4">
-              <p class="text-[9px] font-bold text-ios-gray uppercase tracking-wider">Weekly Capture</p>
-              <h4 class="text-lg font-black tracking-tight mt-1 text-ios-green">${formatZAR(earnedThisWeek)}</h4>
+        const viewHtml = `
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
+            <div class="ios-card stat-card p-3 sm:p-4">
+              <p class="text-[8px] sm:text-[9px] font-bold text-ios-gray uppercase tracking-wider">Weekly</p>
+              <h4 class="text-base sm:text-lg font-black tracking-tight mt-1 text-ios-green">${formatZAR(earnedThisWeek)}</h4>
             </div>
-            <div class="ios-card p-4">
-              <p class="text-[9px] font-bold text-ios-gray uppercase tracking-wider">MTD Performance</p>
-              <h4 class="text-lg font-black tracking-tight mt-1 text-ios-purple">${formatZAR(earnedThisMonth)}</h4>
+            <div class="ios-card stat-card p-3 sm:p-4">
+              <p class="text-[8px] sm:text-[9px] font-bold text-ios-gray uppercase tracking-wider">MTD</p>
+              <h4 class="text-base sm:text-lg font-black tracking-tight mt-1 text-ios-purple">${formatZAR(earnedThisMonth)}</h4>
             </div>
-            <div class="ios-card p-4">
-              <p class="text-[9px] font-bold text-ios-gray uppercase tracking-wider">Cumulative Income</p>
-              <h4 class="text-lg font-black tracking-tight mt-1 text-ios-blue">${formatZAR(grandTotalAccrued)}</h4>
+            <div class="ios-card stat-card p-3 sm:p-4">
+              <p class="text-[8px] sm:text-[9px] font-bold text-ios-gray uppercase tracking-wider">Cumulative</p>
+              <h4 class="text-base sm:text-lg font-black tracking-tight mt-1 text-ios-blue">${formatZAR(grandTotalAccrued)}</h4>
             </div>
-            <div class="ios-card p-4">
-              <p class="text-[9px] font-bold text-ios-gray uppercase tracking-wider">Settled</p>
-              <h4 class="text-lg font-black tracking-tight mt-1">${paidInvoices.length} Cleared Invoices</h4>
+            <div class="ios-card stat-card p-3 sm:p-4">
+              <p class="text-[8px] sm:text-[9px] font-bold text-ios-gray uppercase tracking-wider">Settled</p>
+              <h4 class="text-base sm:text-lg font-black tracking-tight mt-1">${paidInvoices.length}</h4>
             </div>
           </div>
 
-          <div class="ios-card p-5">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-ios-gray mb-4 pb-2 border-b border-[var(--border-system)]">Audit Trail Analytics Log</h3>
+          <div class="ios-card p-4 sm:p-5">
+            <h3 class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ios-gray mb-3 pb-2 border-b border-[var(--border-system)]">Audit Trail Analytics Log</h3>
             <div class="divide-y divide-[var(--border-system)]">
               ${paidInvoices.reverse().map(d => `
-                <div class="flex justify-between items-center py-3 text-xs">
-                  <div>
-                    <p class="font-bold text-[var(--text-primary)]">${sanitizeHtmlString(d.clientName)}</p>
-                    <p class="text-[10px] text-ios-gray mt-0.5">${d.documentNumber} • Settlement Cleared</p>
+                <div class="flex justify-between items-center py-2.5 sm:py-3 text-xs">
+                  <div class="min-w-0 flex-1 pr-2">
+                    <p class="font-bold text-[var(--text-primary)] text-[11px] sm:text-xs truncate">${sanitizeHtmlString(d.clientName)}</p>
+                    <p class="text-[9px] sm:text-[10px] text-ios-gray mt-0.5 truncate">${d.documentNumber} • Cleared</p>
                   </div>
-                  <span class="font-extrabold text-ios-green">${formatZAR(computeDocumentFinancials(d.items, d.useVat).total)}</span>
+                  <span class="font-extrabold text-ios-green text-[11px] sm:text-xs flex-shrink-0">${formatZAR(computeDocumentFinancials(d.items, d.useVat).total)}</span>
                 </div>
-              `).join('') || '<p class="text-xs text-ios-gray text-center py-6 italic">No audited realized liquid payments detected within current parameter matrices.</p>'}
+              `).join('') || '<p class="text-xs text-ios-gray text-center py-6 italic">No audited realized liquid payments detected.</p>'}
             </div>
           </div>
         `;
 
-          document.getElementById('desktop-view-viewport').innerHTML = viewHtml;
-          document.getElementById('mobile-view-viewport').innerHTML = viewHtml;
-        };
+        const desktopView = document.getElementById('desktop-view-viewport');
+        const mobileView = document.getElementById('mobile-view-viewport');
+        if (desktopView) desktopView.innerHTML = viewHtml;
+        if (mobileView) mobileView.innerHTML = viewHtml;
+      };
 
-        // =========================================================================
-        // CORPORATE INFRASTRUCTURE TREE WORKSPACE (COMPANIES)
-        // =========================================================================
-        const renderCompaniesWorkspace = () => {
-          const structuralListHtml = state.companies.map(c => `
-          <div class="ios-card p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full ${c.id === state.activeCompanyId ? 'bg-ios-green animate-pulse' : 'bg-transparent'}"></span>
-                <p class="font-bold text-base tracking-tight">${sanitizeHtmlString(c.name)}</p>
+      // =========================================================================
+      // CORPORATE INFRASTRUCTURE TREE WORKSPACE (COMPANIES)
+      // =========================================================================
+      const renderCompaniesWorkspace = () => {
+        const structuralListHtml = state.companies.map(c => `
+          <div class="ios-card p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 company-item">
+            <div class="flex items-center gap-3 sm:gap-4 min-w-0 w-full sm:w-auto">
+              ${c.logo ? `<img src="${c.logo}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border border-[var(--border-system)] flex-shrink-0" alt="Logo" onerror="this.style.display='none'">` : `<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-ios-blue/10 flex items-center justify-center text-ios-blue font-bold text-base sm:text-lg flex-shrink-0">${c.name.charAt(0)}</div>`}
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full ${c.id === state.activeCompanyId ? 'bg-ios-green animate-pulse' : 'bg-transparent'} flex-shrink-0"></span>
+                  <p class="font-bold text-sm sm:text-base tracking-tight truncate">${sanitizeHtmlString(c.name)}</p>
+                </div>
+                <p class="text-[10px] sm:text-xs text-ios-gray font-medium mt-0.5 truncate">${sanitizeHtmlString(c.email)} • ${sanitizeHtmlString(c.phone || 'No phone')}</p>
+                <p class="text-[9px] sm:text-[10px] text-ios-gray mt-0.5 italic truncate">${sanitizeHtmlString(c.address)}</p>
               </div>
-              <p class="text-xs text-ios-gray font-medium mt-1">${sanitizeHtmlString(c.email)} • ${sanitizeHtmlString(c.phone || 'No Registration Phone')}</p>
-              <p class="text-[10px] text-ios-gray mt-0.5 italic">${sanitizeHtmlString(c.address)}</p>
             </div>
-            <div class="flex gap-2 w-full sm:w-auto justify-end">
-              <button onclick="editExistingCompanyNode('${c.id}')" class="px-3 py-1.5 rounded-lg border border-[var(--border-system)] bg-[var(--bg-system)] text-xs font-bold text-[var(--text-primary)] hover:bg-[var(--border-system)] transition-all">Edit Company</button>
-              <button onclick="purgeCompanyNodeEngine('${c.id}')" class="px-3 py-1.5 rounded-lg border border-ios-red/20 bg-ios-red/10 text-xs font-bold text-ios-red hover:bg-ios-red/20 transition-all">Delete</button>
+            <div class="flex gap-2 w-full sm:w-auto justify-end sm:justify-start company-actions flex-shrink-0">
+              <button onclick="editExistingCompanyNode('${c.id}')" class="px-2.5 sm:px-3 py-1.5 rounded-lg border border-[var(--border-system)] bg-[var(--bg-system)] text-[10px] sm:text-xs font-bold text-[var(--text-primary)] hover:bg-[var(--border-system)] transition-all">Edit</button>
+              <button onclick="purgeCompanyNodeEngine('${c.id}')" class="px-2.5 sm:px-3 py-1.5 rounded-lg border border-ios-red/20 bg-ios-red/10 text-[10px] sm:text-xs font-bold text-ios-red hover:bg-ios-red/20 transition-all">Delete</button>
             </div>
           </div>
         `).join('') || `
-          <div class="py-16 text-center space-y-4">
-            <p class="text-sm text-ios-gray italic">No decentralized corporate legal operations entities configured.</p>
+          <div class="py-12 sm:py-16 text-center space-y-4">
+            <p class="text-sm text-ios-gray italic">No companies configured yet.</p>
           </div>
         `;
 
-          const coreControlLayout = `
+        const coreControlLayout = `
           <div class="space-y-4">
-            <div class="flex justify-between items-center bg-ios-blue/5 border border-ios-blue/10 p-4 rounded-xl">
-              <span class="text-xs font-bold text-ios-blue">Company Registry</span>
-              <button onclick="openNewCompanyNodeForm()" class="bg-ios-blue text-white px-4 py-2 rounded-xl text-xs font-bold hover:opacity-90 shadow-md">＋ New Company</button>
+            <div class="flex justify-between items-center bg-ios-blue/5 border border-ios-blue/10 p-3 sm:p-4 rounded-xl">
+              <span class="text-[10px] sm:text-xs font-bold text-ios-blue">Company Registry</span>
+              <button onclick="openNewCompanyNodeForm()" class="bg-ios-blue text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-bold hover:opacity-90 shadow-md">＋ New Company</button>
             </div>
             <div class="space-y-3">${structuralListHtml}</div>
           </div>
         `;
 
-          document.getElementById('desktop-view-viewport').innerHTML = coreControlLayout;
-          document.getElementById('mobile-view-viewport').innerHTML = coreControlLayout;
-        };
+        const desktopView = document.getElementById('desktop-view-viewport');
+        const mobileView = document.getElementById('mobile-view-viewport');
+        if (desktopView) desktopView.innerHTML = coreControlLayout;
+        if (mobileView) mobileView.innerHTML = coreControlLayout;
+      };
 
-        // =========================================================================
-        // DYNAMIC iOS MODAL FORM FLOW SYSTEM GENERATOR MANAGERS
-        // =========================================================================
-        window.openUniversalSheet = (title, formInnerHtml) => {
-          document.getElementById('universalSheetTitle').textContent = title;
-          document.getElementById('universalSheetPayload').innerHTML = formInnerHtml;
+      // =========================================================================
+      // DYNAMIC iOS MODAL FORM FLOW SYSTEM GENERATOR MANAGERS
+      // =========================================================================
+      window.openUniversalSheet = (title, formInnerHtml) => {
+        const titleEl = document.getElementById('universalSheetTitle');
+        if (titleEl) titleEl.textContent = title;
+        const payload = document.getElementById('universalSheetPayload');
+        if (payload) payload.innerHTML = formInnerHtml;
 
-          const outerFrame = document.getElementById('universalSheetModal');
-          const innerFrame = document.getElementById('sheetContentFrame');
+        const outerFrame = document.getElementById('universalSheetModal');
+        const innerFrame = document.getElementById('sheetContentFrame');
 
+        if (outerFrame) {
           outerFrame.classList.remove('pointer-events-none', 'opacity-0');
+        }
+        if (innerFrame) {
           innerFrame.classList.remove('scale-95', 'translate-y-4');
-        };
+        }
+      };
 
-        window.closeUniversalSheet = () => {
-          const outerFrame = document.getElementById('universalSheetModal');
-          const innerFrame = document.getElementById('sheetContentFrame');
+      window.closeUniversalSheet = () => {
+        const outerFrame = document.getElementById('universalSheetModal');
+        const innerFrame = document.getElementById('sheetContentFrame');
 
+        if (outerFrame) {
           outerFrame.classList.add('pointer-events-none', 'opacity-0');
+        }
+        if (innerFrame) {
           innerFrame.classList.add('scale-95', 'translate-y-4');
-          state.editingTargetId = null;
-        };
+        }
+        state.editingTargetId = null;
+      };
 
-        // =========================================================================
-        // COMPONENT MODAL: DOCUMENT ENTRY MATRIX CONTROLLER
-        // =========================================================================
-        window.openNewDocumentForm = () => {
-          state.editingTargetId = null;
-          generateDocumentFormModalSheet('Instantiate Operational Ledger Object');
-        };
+      // =========================================================================
+      // COMPONENT MODAL: DOCUMENT ENTRY MATRIX CONTROLLER
+      // =========================================================================
+      window.openNewDocumentForm = () => {
+        state.editingTargetId = null;
+        generateDocumentFormModalSheet('Create Document');
+      };
 
-        window.editExistingDocument = (id) => {
-          state.editingTargetId = id;
-          generateDocumentFormModalSheet('Modify Ledger Object Parameters', state.documents.find(d => d.id === id));
-        };
+      window.editExistingDocument = (id) => {
+        state.editingTargetId = id;
+        generateDocumentFormModalSheet('Edit Document', state.documents.find(d => d.id === id));
+      };
 
-        const generateDocumentFormModalSheet = (titleLabel, dataRecord = null) => {
-          const defaultDocNum = dataRecord ? dataRecord.documentNumber : ('DOC-' + Date.now().toString().slice(-6));
-          const defaultDate = dataRecord ? dataRecord.executionDate : new Date().toISOString().split('T')[0];
+      const generateDocumentFormModalSheet = (titleLabel, dataRecord = null) => {
+        const defaultDocNum = dataRecord ? dataRecord.documentNumber : ('DOC-' + Date.now().toString().slice(-6));
+        const defaultDate = dataRecord ? dataRecord.executionDate : new Date().toISOString().split('T')[0];
 
-          const sheetHtml = `
+        const sheetHtml = `
           <div class="space-y-3">
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="text-[10px] font-bold text-ios-gray block mb-1">Functional Object Blueprint Type</label>
-                <select id="form_docType" class="ios-input w-full" onchange="window.handleFormDocTypeVariantChange(this.value)">
-                  <option value="invoice" ${dataRecord?.type === 'invoice' ? 'selected' : ''}>Invoice (Accounts Receivable)</option>
-                  <option value="quote" ${dataRecord?.type === 'quote' ? 'selected' : ''}>Quote (Pipeline Estimation)</option>
+                <label class="text-[10px] font-bold text-ios-gray block mb-1">Document Type</label>
+                <select id="form_docType" class="ios-input" onchange="window.handleFormDocTypeVariantChange(this.value)">
+                  <option value="invoice" ${dataRecord?.type === 'invoice' ? 'selected' : ''}>Invoice</option>
+                  <option value="quote" ${dataRecord?.type === 'quote' ? 'selected' : ''}>Quote</option>
                 </select>
               </div>
               <div>
-                <label class="text-[10px] font-bold text-ios-gray block mb-1">Document System Index Alpha ID</label>
-                <input id="form_docNum" type="text" class="ios-input w-full" value="${defaultDocNum}">
+                <label class="text-[10px] font-bold text-ios-gray block mb-1">Document Number</label>
+                <input id="form_docNum" type="text" class="ios-input" value="${defaultDocNum}">
               </div>
             </div>
 
             <div class="grid grid-cols-3 gap-3">
               <div>
-                <label class="text-[10px] font-bold text-ios-gray block mb-1">Issue Timestamp</label>
-                <input id="form_docDate" type="date" class="ios-input w-full text-xs" value="${defaultDate}">
+                <label class="text-[10px] font-bold text-ios-gray block mb-1">Issue Date</label>
+                <input id="form_docDate" type="date" class="ios-input text-xs" value="${defaultDate}">
               </div>
               <div>
-                <label class="text-[10px] font-bold text-ios-gray block mb-1">Maturity Term Date</label>
-                <input id="form_docDue" type="date" class="ios-input w-full text-xs" value="${dataRecord?.dueDate || ''}">
+                <label class="text-[10px] font-bold text-ios-gray block mb-1">Due Date</label>
+                <input id="form_docDue" type="date" class="ios-input text-xs" value="${dataRecord?.dueDate || ''}">
               </div>
               <div>
-                <label class="text-[10px] font-bold text-ios-gray block mb-1">Reference Token Pointer</label>
-                <input id="form_docRef" type="text" class="ios-input w-full text-xs" placeholder="P.O. Number Tag" value="${dataRecord?.referenceTag || ''}">
+                <label class="text-[10px] font-bold text-ios-gray block mb-1">Reference</label>
+                <input id="form_docRef" type="text" class="ios-input text-xs" placeholder="P.O. Number" value="${dataRecord?.referenceTag || ''}">
               </div>
             </div>
 
             <div class="border-t border-[var(--border-system)] pt-3">
-              <label class="text-[10px] font-bold text-ios-blue uppercase tracking-wider block mb-2">Counterparty KYC Metadata Details</label>
+              <label class="text-[10px] font-bold text-ios-blue uppercase tracking-wider block mb-2">Client Details</label>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <input id="form_cName" type="text" class="ios-input" placeholder="Legal Client Corporate Entity Name *" value="${dataRecord?.clientName || ''}">
-                <input id="form_cEmail" type="email" class="ios-input" placeholder="Primary Communications Email Routing Vector" value="${dataRecord?.clientEmail || ''}">
-                <input id="form_cPhone" type="text" class="ios-input" placeholder="Contact Telephone String Link" value="${dataRecord?.clientPhone || ''}">
-                <input id="form_cAddr" type="text" class="ios-input" placeholder="Physical Operational HQ Demarcation Address" value="${dataRecord?.clientAddr || ''}">
+                <input id="form_cName" type="text" class="ios-input" placeholder="Client Name *" value="${dataRecord?.clientName || ''}">
+                <input id="form_cEmail" type="email" class="ios-input" placeholder="Client Email" value="${dataRecord?.clientEmail || ''}">
+                <input id="form_cPhone" type="text" class="ios-input" placeholder="Client Phone" value="${dataRecord?.clientPhone || ''}">
+                <input id="form_cAddr" type="text" class="ios-input" placeholder="Client Address" value="${dataRecord?.clientAddr || ''}">
               </div>
             </div>
 
             <div class="border-t border-[var(--border-system)] pt-3">
               <div class="flex justify-between items-center mb-2">
-                <label class="text-[10px] font-bold text-ios-purple uppercase tracking-wider">Line Itemization Array Matrix</label>
-                <button onclick="window.appendBlankLineItemRowField()" class="text-xs text-ios-blue font-bold hover:underline">+ Append Financial Row Node</button>
+                <label class="text-[10px] font-bold text-ios-purple uppercase tracking-wider">Line Items</label>
+                <button onclick="window.appendBlankLineItemRowField()" class="text-xs text-ios-blue font-bold hover:underline">+ Add Item</button>
               </div>
               <div id="form_itemsTrackContainer" class="space-y-2 max-h-40 overflow-y-auto pr-1 no-scrollbar">
                 </div>
             </div>
 
-            <div class="border-t border-[var(--border-system)] pt-3 flex items-center justify-between bg-[var(--bg-system)] p-3 rounded-xl">
+            <div class="border-t border-[var(--border-system)] pt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[var(--bg-system)] p-3 rounded-xl">
               <div class="flex items-center gap-3">
-                <span class="text-xs font-bold">Incorporate Statutory SARS 15% ZAR VAT Matrix</span>
+                <span class="text-xs font-bold">Include VAT (15%)</span>
                 <div id="form_vatToggle" class="ios-switch ${dataRecord ? (dataRecord.useVat ? 'active' : '') : 'active'}" onclick="this.classList.toggle('active'); window.evaluateDynamicFormFinancialAggregateTotals();"></div>
               </div>
-              <div class="text-right">
-                <p class="text-[9px] font-bold text-ios-gray">Calculated Dynamic Aggregate Total</p>
+              <div class="text-right w-full sm:w-auto">
+                <p class="text-[9px] font-bold text-ios-gray">Calculated Total</p>
                 <h3 id="form_totalLabelDisplay" class="text-lg font-black text-ios-blue">R 0.00</h3>
               </div>
             </div>
 
             <div class="pt-2">
-              <input id="form_notes" type="text" class="ios-input w-full" placeholder="Internal Declarative Conditions / Service Level Protocol Stipulations Notes" value="${dataRecord?.notes || ''}">
+              <input id="form_notes" type="text" class="ios-input" placeholder="Notes / Terms" value="${dataRecord?.notes || ''}">
             </div>
 
             <button onclick="window.commitFormDocumentSaveWorkflow()" class="w-full bg-ios-blue text-white font-extrabold py-3.5 rounded-xl shadow-lg hover:opacity-95 transition-all text-sm tracking-wide">
-              Compile & Save Operational State Matrix Elements
+              Save Document
             </button>
           </div>
         `;
 
-          window.openUniversalSheet(titleLabel, sheetHtml);
+        window.openUniversalSheet(titleLabel, sheetHtml);
 
-          // Append sub elements inside the runtime document creation cycle
-          if (dataRecord && dataRecord.items && dataRecord.items.length > 0) {
-            dataRecord.items.forEach(itm => window.appendBlankLineItemRowField(itm));
-          } else {
-            window.appendBlankLineItemRowField();
-          }
-          window.evaluateDynamicFormFinancialAggregateTotals();
-        };
+        // Append sub elements inside the runtime document creation cycle
+        if (dataRecord && dataRecord.items && dataRecord.items.length > 0) {
+          dataRecord.items.forEach(itm => window.appendBlankLineItemRowField(itm));
+        } else {
+          window.appendBlankLineItemRowField();
+        }
+        window.evaluateDynamicFormFinancialAggregateTotals();
+      };
 
-        window.handleFormDocTypeVariantChange = (val) => {
-          const indexInput = document.getElementById('form_docNum');
-          if (!indexInput.value || indexInput.value.startsWith('INV-') || indexInput.value.startsWith('QUT-') || indexInput.value.startsWith('DOC-')) {
-            indexInput.value = (val === 'quote' ? 'QUT-' : 'INV-') + Date.now().toString().slice(-6);
-          }
-        };
+      window.handleFormDocTypeVariantChange = (val) => {
+        const indexInput = document.getElementById('form_docNum');
+        if (!indexInput) return;
+        if (!indexInput.value || indexInput.value.startsWith('INV-') || indexInput.value.startsWith('QUT-') || indexInput
+          .value.startsWith('DOC-')) {
+          indexInput.value = (val === 'quote' ? 'QUT-' : 'INV-') + Date.now().toString().slice(-6);
+        }
+      };
 
-        window.appendBlankLineItemRowField = (itemData = null) => {
-          const container = document.getElementById('form_itemsTrackContainer');
-          const wrappingRowDiv = document.createElement('div');
-          wrappingRowDiv.className = "flex items-center gap-2 bg-[var(--bg-card)] p-2 rounded-lg border border-[var(--border-system)] dynamic-item-form-row animate-[fadeIn_0.2s_ease]";
+      window.appendBlankLineItemRowField = (itemData = null) => {
+        const container = document.getElementById('form_itemsTrackContainer');
+        if (!container) return;
+        const wrappingRowDiv = document.createElement('div');
+        wrappingRowDiv.className =
+          "flex items-center gap-2 bg-[var(--bg-card)] p-2 rounded-lg border border-[var(--border-system)] dynamic-item-form-row";
 
-          wrappingRowDiv.innerHTML = `
-          <input type="text" class="ios-input py-1.5 px-2 text-xs flex-1 line-desc-field" placeholder="Item Specification Abstract Description" value="${sanitizeHtmlString(itemData?.desc || '')}">
-          <input type="number" class="ios-input py-1.5 px-2 text-xs w-16 text-center line-qty-field" placeholder="Qty" value="${itemData?.qty || 1}" oninput="window.evaluateDynamicFormFinancialAggregateTotals()">
-          <input type="number" step="0.01" class="ios-input py-1.5 px-2 text-xs w-28 text-right line-price-field" placeholder="Unit Price ZAR" value="${itemData?.price || 0}" oninput="window.evaluateDynamicFormFinancialAggregateTotals()">
-          <button onclick="this.parentElement.remove(); window.evaluateDynamicFormFinancialAggregateTotals();" class="text-ios-red font-bold text-lg px-2 hover:bg-ios-red/5 rounded transition-all">×</button>
+        wrappingRowDiv.innerHTML = `
+          <input type="text" class="ios-input ios-input-sm py-1.5 px-2 text-xs flex-1 line-desc-field" placeholder="Item description" value="${sanitizeHtmlString(itemData?.desc || '')}">
+          <input type="number" class="ios-input ios-input-sm py-1.5 px-2 text-xs w-14 sm:w-16 text-center line-qty-field" placeholder="Qty" value="${itemData?.qty || 1}" oninput="window.evaluateDynamicFormFinancialAggregateTotals()">
+          <input type="number" step="0.01" class="ios-input ios-input-sm py-1.5 px-2 text-xs w-24 sm:w-28 text-right line-price-field" placeholder="Price" value="${itemData?.price || 0}" oninput="window.evaluateDynamicFormFinancialAggregateTotals()">
+          <button onclick="this.parentElement.remove(); window.evaluateDynamicFormFinancialAggregateTotals();" class="text-ios-red font-bold text-lg px-2 hover:bg-ios-red/5 rounded transition-all flex-shrink-0">×</button>
         `;
-          container.appendChild(wrappingRowDiv);
-        };
+        container.appendChild(wrappingRowDiv);
+      };
 
-        window.evaluateDynamicFormFinancialAggregateTotals = () => {
-          const rows = document.querySelectorAll('.dynamic-item-form-row');
-          let arrayPayload = [];
-          rows.forEach(r => {
-            arrayPayload.push({
-              qty: parseFloat(r.querySelector('.line-qty-field').value) || 0,
-              price: parseFloat(r.querySelector('.line-price-field').value) || 0
+      window.evaluateDynamicFormFinancialAggregateTotals = () => {
+        const rows = document.querySelectorAll('.dynamic-item-form-row');
+        let arrayPayload = [];
+        rows.forEach(r => {
+          const qtyEl = r.querySelector('.line-qty-field');
+          const priceEl = r.querySelector('.line-price-field');
+          arrayPayload.push({
+            qty: parseFloat(qtyEl?.value) || 0,
+            price: parseFloat(priceEl?.value) || 0
+          });
+        });
+        const vatToggle = document.getElementById('form_vatToggle');
+        const isVatActive = vatToggle ? vatToggle.classList.contains('active') : false;
+        const computedMetrics = computeDocumentFinancials(arrayPayload, isVatActive);
+        const totalLabel = document.getElementById('form_totalLabelDisplay');
+        if (totalLabel) totalLabel.textContent = formatZAR(computedMetrics.total);
+      };
+
+      window.commitFormDocumentSaveWorkflow = () => {
+        const clientVal = document.getElementById('form_cName')?.value?.trim();
+        if (!clientVal) return alert('Please enter a client name.');
+
+        const rows = document.querySelectorAll('.dynamic-item-form-row');
+        let parsedRowsArray = [];
+        rows.forEach(r => {
+          const descriptionVal = r.querySelector('.line-desc-field')?.value?.trim();
+          if (descriptionVal) {
+            parsedRowsArray.push({
+              desc: descriptionVal,
+              qty: parseFloat(r.querySelector('.line-qty-field')?.value) || 0,
+              price: parseFloat(r.querySelector('.line-price-field')?.value) || 0
             });
-          });
-          const isVatActive = document.getElementById('form_vatToggle').classList.contains('active');
-          const computedMetrics = computeDocumentFinancials(arrayPayload, isVatActive);
-          document.getElementById('form_totalLabelDisplay').textContent = formatZAR(computedMetrics.total);
+          }
+        });
+
+        if (parsedRowsArray.length === 0) {
+          parsedRowsArray.push({ desc: "Standard Service", qty: 1, price: 0 });
+        }
+
+        const currentActiveEditorTargetId = state.editingTargetId;
+        const fallbackHistorySnapshot = currentActiveEditorTargetId ? state.documents.find(d => d.id ===
+          currentActiveEditorTargetId) : null;
+
+        const vatToggle = document.getElementById('form_vatToggle');
+        const isVatActive = vatToggle ? vatToggle.classList.contains('active') : false;
+
+        const structuralDocumentStatePayload = {
+          id: currentActiveEditorTargetId || Date.now().toString(),
+          companyId: state.activeCompanyId,
+          type: document.getElementById('form_docType')?.value || 'invoice',
+          documentNumber: document.getElementById('form_docNum')?.value?.trim() || 'DOC-' + Date.now().toString().slice(-
+          4),
+          executionDate: document.getElementById('form_docDate')?.value || new Date().toISOString().split('T')[0],
+          dueDate: document.getElementById('form_docDue')?.value || '',
+          referenceTag: document.getElementById('form_docRef')?.value?.trim() || '',
+          clientName: clientVal,
+          clientEmail: document.getElementById('form_cEmail')?.value?.trim() || '',
+          clientPhone: document.getElementById('form_cPhone')?.value?.trim() || '',
+          clientAddr: document.getElementById('form_cAddr')?.value?.trim() || '',
+          items: parsedRowsArray,
+          useVat: isVatActive,
+          notes: document.getElementById('form_notes')?.value?.trim() || '',
+          isPaid: fallbackHistorySnapshot ? fallbackHistorySnapshot.isPaid : false,
+          isConverted: fallbackHistorySnapshot ? fallbackHistorySnapshot.isConverted : false,
+          createdTimestamp: fallbackHistorySnapshot ? fallbackHistorySnapshot.createdTimestamp : new Date().toISOString()
         };
 
-        window.commitFormDocumentSaveWorkflow = () => {
-          const clientVal = document.getElementById('form_cName').value.trim();
-          if (!clientVal) return alert('Counterparty Client Identity Context configuration missing parameter token validation requirements.');
+        if (currentActiveEditorTargetId) {
+          const searchIdx = state.documents.findIndex(d => d.id === currentActiveEditorTargetId);
+          if (searchIdx > -1) state.documents[searchIdx] = structuralDocumentStatePayload;
+        } else {
+          state.documents.push(structuralDocumentStatePayload);
+        }
 
-          const rows = document.querySelectorAll('.dynamic-item-form-row');
-          let parsedRowsArray = [];
-          rows.forEach(r => {
-            const descriptionVal = r.querySelector('.line-desc-field').value.trim();
-            if (descriptionVal) {
-              parsedRowsArray.push({
-                desc: descriptionVal,
-                qty: parseFloat(r.querySelector('.line-qty-field').value) || 0,
-                price: parseFloat(r.querySelector('.line-price-field').value) || 0
-              });
-            }
-          });
+        commitStateToStorage();
+        closeUniversalSheet();
+        switchView(state.activeWorkspaceView);
+      };
 
-          if (parsedRowsArray.length === 0) {
-            parsedRowsArray.push({ desc: "Standard Provisioned Operational Services Ledger Entry", qty: 1, price: 0 });
-          }
+      // =========================================================================
+      // EXECUTABLE MUTATION PIPELINE ACTIONS ENGINE
+      // =========================================================================
+      window.duplicateDocumentState = (id) => {
+        const sourceObj = state.documents.find(d => d.id === id);
+        if (!sourceObj) return;
 
-          const currentActiveEditorTargetId = state.editingTargetId;
-          const fallbackHistorySnapshot = currentActiveEditorTargetId ? state.documents.find(d => d.id === currentActiveEditorTargetId) : null;
-
-          const structuralDocumentStatePayload = {
-            id: currentActiveEditorTargetId || Date.now().toString(),
-            companyId: state.activeCompanyId,
-            type: document.getElementById('form_docType').value,
-            documentNumber: document.getElementById('form_docNum').value.trim() || 'DOC-' + Date.now().toString().slice(-4),
-            executionDate: document.getElementById('form_docDate').value,
-            dueDate: document.getElementById('form_docDue').value,
-            referenceTag: document.getElementById('form_docRef').value.trim(),
-            clientName: clientVal,
-            clientEmail: document.getElementById('form_cEmail').value.trim(),
-            clientPhone: document.getElementById('form_cPhone').value.trim(),
-            clientAddr: document.getElementById('form_cAddr').value.trim(),
-            items: parsedRowsArray,
-            useVat: document.getElementById('form_vatToggle').classList.contains('active'),
-            notes: document.getElementById('form_notes').value.trim(),
-            isPaid: fallbackHistorySnapshot ? fallbackHistorySnapshot.isPaid : false,
-            isConverted: fallbackHistorySnapshot ? fallbackHistorySnapshot.isConverted : false,
-            createdTimestamp: fallbackHistorySnapshot ? fallbackHistorySnapshot.createdTimestamp : new Date().toISOString()
-          };
-
-          if (currentActiveEditorTargetId) {
-            const searchIdx = state.documents.findIndex(d => d.id === currentActiveEditorTargetId);
-            if (searchIdx > -1) state.documents[searchIdx] = structuralDocumentStatePayload;
-          } else {
-            state.documents.push(structuralDocumentStatePayload);
-          }
-
-          commitStateToStorage();
-          closeUniversalSheet();
-          switchView(state.activeWorkspaceView);
+        const duplicatedInstanceObject = {
+          ...sourceObj,
+          id: Date.now().toString(),
+          documentNumber: (sourceObj.type === 'quote' ? 'QUT-' : 'INV-') + Date.now().toString().slice(-6),
+          isPaid: false,
+          isConverted: false,
+          createdTimestamp: new Date().toISOString()
         };
 
-        // =========================================================================
-        // EXECUTABLE MUTATION PIPELINE ACTIONS ENGINE
-        // =========================================================================
-        window.duplicateDocumentState = (id) => {
-          const sourceObj = state.documents.find(d => d.id === id);
-          if (!sourceObj) return;
+        state.documents.push(duplicatedInstanceObject);
+        commitStateToStorage();
+        switchView(state.activeWorkspaceView);
+      };
 
-          const duplicatedInstanceObject = {
-            ...sourceObj,
-            id: Date.now().toString(),
-            documentNumber: (sourceObj.type === 'quote' ? 'QUT-' : 'INV-') + Date.now().toString().slice(-6),
-            isPaid: false,
-            isConverted: false,
-            createdTimestamp: new Date().toISOString()
-          };
-
-          state.documents.push(duplicatedInstanceObject);
+      window.togglePaymentStateEngine = (id) => {
+        const targetedDoc = state.documents.find(d => d.id === id);
+        if (targetedDoc) {
+          targetedDoc.isPaid = !targetedDoc.isPaid;
           commitStateToStorage();
           switchView(state.activeWorkspaceView);
+        }
+      };
+
+      window.deleteDocumentFromState = (id) => {
+        if (confirm('Are you sure you want to delete this document?')) {
+          state.documents = state.documents.filter(d => d.id !== id);
+          commitStateToStorage();
+          switchView(state.activeWorkspaceView);
+        }
+      };
+
+      // CRITICAL UPDATE SPECIFICATION:
+      // Convert Quote to Invoice once accepted
+      window.convertQuoteToInvoiceEngine = (id) => {
+        const targetedQuote = state.documents.find(d => d.id === id);
+        if (targetedQuote && targetedQuote.type === 'quote') {
+          targetedQuote.type = 'invoice';
+          targetedQuote.isConverted = true;
+          targetedQuote.documentNumber = 'INV-' + Date.now().toString().slice(-6);
+          targetedQuote.isPaid = false;
+
+          commitStateToStorage();
+          switchView('documents');
+        }
+      };
+
+      window.triggerWhatsAppTransmissionLink = (id) => {
+        const d = state.documents.find(x => x.id === id);
+        if (!d) return;
+        const formattedTotal = formatZAR(computeDocumentFinancials(d.items, d.useVat).total);
+        const outboundUrlStringText =
+          `Business Document: ${d.type.toUpperCase()} - Ref: ${d.documentNumber}\nTotal: ${formattedTotal}\nClient: ${d.clientName}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(outboundUrlStringText)}`, '_blank');
+      };
+
+      // =========================================================================
+      // PREMIUM INVOICE PDF GENERATION - CLEAN BLUE EDITION
+      // =========================================================================
+      window.exportToPDFEngine = async (id) => {
+        const d = state.documents.find(x => x.id === id);
+        if (!d) return;
+
+        const ownerCompany = state.companies.find(c => c.id === d.companyId) || {
+          name: "Your Business Name",
+          email: "info@yourbusiness.com",
+          address: "Your Business Address",
+          phone: "",
+          bank: "",
+          accNum: ""
         };
 
-        window.togglePaymentStateEngine = (id) => {
-          const targetedDoc = state.documents.find(d => d.id === id);
-          if (targetedDoc) {
-            targetedDoc.isPaid = !targetedDoc.isPaid;
-            commitStateToStorage();
-            switchView(state.activeWorkspaceView);
-          }
-        };
+        const financialMetrics = computeDocumentFinancials(d.items, d.useVat);
 
-        window.deleteDocumentFromState = (id) => {
-          if (confirm('Verify confirmation execution mandate: Purge data track node vector completely from local infrastructure registers?')) {
-            state.documents = state.documents.filter(d => d.id !== id);
-            commitStateToStorage();
-            switchView(state.activeWorkspaceView);
-          }
-        };
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText =
+          'position:absolute;left:-9999px;top:0;width:800px;padding:0;background:#ffffff;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;';
 
-        // CRITICAL UPDATE SPECIFICATION:
-        // Convert Quote to Invoice once accepted
-        window.convertQuoteToInvoiceEngine = (id) => {
-          const targetedQuote = state.documents.find(d => d.id === id);
-          if (targetedQuote && targetedQuote.type === 'quote') {
-            targetedQuote.type = 'invoice';
-            targetedQuote.isConverted = true;
-            // Transform code structure index mapping parameters dynamically
-            targetedQuote.documentNumber = 'INV-' + Date.now().toString().slice(-6);
-            targetedQuote.isPaid = false; // Fresh initialization state parameter requirement inside financial tracking
-
-            commitStateToStorage();
-            switchView('documents');
-          }
-        };
-
-        window.triggerWhatsAppTransmissionLink = (id) => {
-          const d = state.documents.find(x => x.id === id);
-          if (!d) return;
-          const formattedTotal = formatZAR(computeDocumentFinancials(d.items, d.useVat).total);
-          const outboundUrlStringText = `Enterprise System Notification Broadcast System \n Document: ${d.type.toUpperCase()} - Record ID: ${d.documentNumber}\nAggregate Financial Value: ${formattedTotal}\nStatus: Processed and Registered within Secure Environment Ledger.`;
-          window.open(`https://wa.me/?text=${encodeURIComponent(outboundUrlStringText)}`, '_blank');
-        };
-
-        // =========================================================================
-// PREMIUM INVOICE PDF GENERATION - CLEAN BLUE EDITION
-// =========================================================================
-window.exportToPDFEngine = async (id) => {
-  const d = state.documents.find(x => x.id === id);
-  if (!d) return;
-  
-  const ownerCompany = state.companies.find(c => c.id === d.companyId) || { 
-    name: "Your Business Name", 
-    email: "info@yourbusiness.com", 
-    address: "Your Business Address",
-    phone: "",
-    bank: "",
-    accNum: ""
-  };
-  
-  const financialMetrics = computeDocumentFinancials(d.items, d.useVat);
-
-  const wrapper = document.createElement('div');
-  wrapper.style.cssText = 'position:absolute;left:-9999px;top:0;width:800px;padding:0;background:#ffffff;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;';
-
-  wrapper.innerHTML = `
+        wrapper.innerHTML = `
     <div style="padding:40px 45px 0 45px;">
       <!-- Header -->
       <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #007aff;padding-bottom:25px;margin-bottom:30px;">
@@ -1245,160 +1514,217 @@ window.exportToPDFEngine = async (id) => {
     </div>
   `;
 
-  document.body.appendChild(wrapper);
+        document.body.appendChild(wrapper);
 
-  try {
-    const canvas = await html2canvas(wrapper, { 
-      scale: 2.5, 
-      backgroundColor: '#ffffff', 
-      useCORS: true, 
-      logging: false 
-    });
-    const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-    
-    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
-    pdf.save(`Invoice_${d.documentNumber}.pdf`);
-  } catch (err) {
-    alert("Error generating PDF: " + err.message);
-  } finally {
-    document.body.removeChild(wrapper);
-  }
-};
-        // =========================================================================
-        // COMPONENT MODAL: CORPORATE NODE REGISTRY CONFIGURATOR
-        // =========================================================================
-        window.openNewCompanyNodeForm = () => {
-          state.editingTargetId = null;
-          generateCompanyNodeModalSheet('Add Company');
-        };
+        try {
+          const canvas = await html2canvas(wrapper, {
+            scale: 2.5,
+            backgroundColor: '#ffffff',
+            useCORS: true,
+            logging: false
+          });
+          const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-        window.editExistingCompanyNode = (id) => {
-          state.editingTargetId = id;
-          generateCompanyNodeModalSheet('Edit Company', state.companies.find(c => c.id === id));
-        };
+          pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+          pdf.save(`Invoice_${d.documentNumber}.pdf`);
+        } catch (err) {
+          alert("Error generating PDF: " + err.message);
+        } finally {
+          document.body.removeChild(wrapper);
+        }
+      };
+      // =========================================================================
+      // COMPONENT MODAL: CORPORATE NODE REGISTRY CONFIGURATOR
+      // =========================================================================
+      window.openNewCompanyNodeForm = () => {
+        state.editingTargetId = null;
+        generateCompanyNodeModalSheet('Add Company');
+      };
 
-        const generateCompanyNodeModalSheet = (titleLabel, dataRecord = null) => {
-          const sheetHtml = `
+      window.editExistingCompanyNode = (id) => {
+        state.editingTargetId = id;
+        generateCompanyNodeModalSheet('Edit Company', state.companies.find(c => c.id === id));
+      };
+
+      const generateCompanyNodeModalSheet = (titleLabel, dataRecord = null) => {
+        const sheetHtml = `
           <div class="space-y-3">
             <div>
               <label class="text-[10px] font-bold text-ios-gray block mb-1">Company Name *</label>
-              <input id="form_compName" type="text" class="ios-input w-full" placeholder="e.g. Wiretree Digital (Pty) Ltd" value="${dataRecord?.name || ''}">
+              <input id="form_compName" type="text" class="ios-input" placeholder="e.g. Wiretree Digital" value="${dataRecord?.name || ''}">
             </div>
             <div>
               <label class="text-[10px] font-bold text-ios-gray block mb-1">Company Email</label>
-              <input id="form_compEmail" type="email" class="ios-input w-full" placeholder="billing@wiretree.co.za" value="${dataRecord?.email || ''}">
+              <input id="form_compEmail" type="email" class="ios-input" placeholder="info@wiretree.co.za" value="${dataRecord?.email || ''}">
             </div>
             <div>
               <label class="text-[10px] font-bold text-ios-gray block mb-1">Address</label>
-              <input id="form_compAddr" type="text" class="ios-input w-full" placeholder="Cape Town, South Africa" value="${dataRecord?.address || ''}">
+              <input id="form_compAddr" type="text" class="ios-input" placeholder="Cape Town, South Africa" value="${dataRecord?.address || ''}">
             </div>
             <div>
-              <label class="text-[10px] font-bold text-ios-gray block mb-1">Mobile</label>
-              <input id="form_compPhone" type="number" class="ios-input w-full" placeholder="+27 (0) 81 000 0000" value="${dataRecord?.phone || ''}">
+              <label class="text-[10px] font-bold text-ios-gray block mb-1">Phone</label>
+              <input id="form_compPhone" type="text" class="ios-input" placeholder="+27 81 000 0000" value="${dataRecord?.phone || ''}">
+            </div>
+
+            <div>
+              <label class="text-[10px] font-bold text-ios-gray block mb-1">Company Logo</label>
+              <div class="flex flex-wrap items-center gap-3">
+                <img id="logoPreview" class="logo-preview" src="${dataRecord?.logo || ''}" alt="Logo Preview" onerror="this.style.display='none'">
+                <div class="flex flex-wrap items-center gap-2">
+                  <input type="file" id="logoFileInput" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
+                  <button onclick="document.getElementById('logoFileInput').click()" class="logo-upload-btn">Choose Photo</button>
+                  <button onclick="clearLogo()" class="text-[10px] text-ios-red font-bold px-3 py-1.5 rounded-lg border border-ios-red/20 bg-ios-red/5 hover:bg-ios-red/10 transition-all">Remove</button>
+                </div>
+              </div>
+              <input id="form_compLogo" type="hidden" value="${dataRecord?.logo || ''}">
             </div>
 
             <div class="border-t border-[var(--border-system)] pt-3">
-              <label class="text-[10px] font-bold text-ios-blue uppercase tracking-wider block mb-2">Bank Information</label>
+              <label class="text-[10px] font-bold text-ios-blue uppercase tracking-wider block mb-2">Bank Details</label>
               <div class="grid grid-cols-2 gap-2">
                 <div>
-                  <label class="text-[9px] font-bold text-ios-gray block mb-0.5">Banking Corporation</label>
-                  <input id="form_compBank" type="text" class="ios-input text-xs" placeholder="First National Bank (FNB)" value="${dataRecord?.bank || ''}">
+                  <label class="text-[9px] font-bold text-ios-gray block mb-0.5">Bank</label>
+                  <input id="form_compBank" type="text" class="ios-input text-xs" placeholder="FNB" value="${dataRecord?.bank || ''}">
                 </div>
                 <div>
-                  <label class="text-[9px] font-bold text-ios-gray block mb-0.5">Account Tracking Number</label>
-                  <input id="form_compAcc" type="number" class="ios-input text-xs" placeholder="620123456789" value="${dataRecord?.accNum || ''}">
+                  <label class="text-[9px] font-bold text-ios-gray block mb-0.5">Account Number</label>
+                  <input id="form_compAcc" type="text" class="ios-input text-xs" placeholder="620123456789" value="${dataRecord?.accNum || ''}">
                 </div>
               </div>
             </div>
 
             <button onclick="window.commitFormCompanyNodeSaveWorkflow()" class="w-full bg-ios-blue text-white font-extrabold py-3.5 rounded-xl shadow-lg mt-4 text-sm">
-              Register Company
+              Save Company
             </button>
           </div>
         `;
-          window.openUniversalSheet(titleLabel, sheetHtml);
+        window.openUniversalSheet(titleLabel, sheetHtml);
+        // If there's a logo, show it
+        if (dataRecord?.logo) {
+          const preview = document.getElementById('logoPreview');
+          if (preview) preview.src = dataRecord.logo;
+        }
+      };
+
+      // Logo upload handler
+      window.handleLogoUpload = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const dataUrl = e.target.result;
+          const preview = document.getElementById('logoPreview');
+          if (preview) {
+            preview.src = dataUrl;
+            preview.style.display = 'block';
+          }
+          const logoInput = document.getElementById('form_compLogo');
+          if (logoInput) logoInput.value = dataUrl;
+        };
+        reader.readAsDataURL(file);
+        // Reset input so same file can be re-uploaded
+        event.target.value = '';
+      };
+
+      window.clearLogo = () => {
+        const preview = document.getElementById('logoPreview');
+        if (preview) {
+          preview.src = '';
+          preview.style.display = 'none';
+        }
+        const logoInput = document.getElementById('form_compLogo');
+        if (logoInput) logoInput.value = '';
+        const fileInput = document.getElementById('logoFileInput');
+        if (fileInput) fileInput.value = '';
+      };
+
+      window.commitFormCompanyNodeSaveWorkflow = () => {
+        const nameVal = document.getElementById('form_compName')?.value?.trim();
+        if (!nameVal) return alert('Please enter a company name.');
+
+        const targetedConfigId = state.editingTargetId;
+        const structuralCorporatePayload = {
+          id: targetedConfigId || Date.now().toString(),
+          name: nameVal,
+          email: document.getElementById('form_compEmail')?.value?.trim() || '',
+          address: document.getElementById('form_compAddr')?.value?.trim() || '',
+          phone: document.getElementById('form_compPhone')?.value?.trim() || '',
+          logo: document.getElementById('form_compLogo')?.value?.trim() || '',
+          bank: document.getElementById('form_compBank')?.value?.trim() || '',
+          accNum: document.getElementById('form_compAcc')?.value?.trim() || ''
         };
 
-        window.commitFormCompanyNodeSaveWorkflow = () => {
-          const nameVal = document.getElementById('form_compName').value.trim();
-          if (!nameVal) return alert('Subsystem parameter mismatch: Corporate structural assignment token requires validation identification title.');
+        if (targetedConfigId) {
+          const matchingIdx = state.companies.findIndex(c => c.id === targetedConfigId);
+          if (matchingIdx > -1) state.companies[matchingIdx] = structuralCorporatePayload;
+        } else {
+          state.companies.push(structuralCorporatePayload);
+          if (!state.activeCompanyId) {
+            state.activeCompanyId = structuralCorporatePayload.id;
+          }
+        }
 
-          const targetedConfigId = state.editingTargetId;
-          const structuralCorporatePayload = {
-            id: targetedConfigId || Date.now().toString(),
-            name: nameVal,
-            email: document.getElementById('form_compEmail').value.trim(),
-            address: document.getElementById('form_compAddr').value.trim(),
-            phone: document.getElementById('form_compPhone').value.trim(),
-            bank: document.getElementById('form_compBank').value.trim(),
-            accNum: document.getElementById('form_compAcc').value.trim()
-          };
+        commitStateToStorage();
+        syncDropdownSelectors();
+        closeUniversalSheet();
+        switchView('companies');
+      };
 
-          if (targetedConfigId) {
-            const matchingIdx = state.companies.findIndex(c => c.id === targetedConfigId);
-            if (matchingIdx > -1) state.companies[matchingIdx] = structuralCorporatePayload;
-          } else {
-            state.companies.push(structuralCorporatePayload);
-            if (!state.activeCompanyId) {
-              state.activeCompanyId = structuralCorporatePayload.id;
-            }
+      window.purgeCompanyNodeEngine = (id) => {
+        if (confirm('Are you sure you want to delete this company and all its documents?')) {
+          state.companies = state.companies.filter(c => c.id !== id);
+          state.documents = state.documents.filter(d => d.companyId !== id);
+
+          if (state.activeCompanyId === id) {
+            state.activeCompanyId = state.companies[0]?.id || null;
           }
 
           commitStateToStorage();
           syncDropdownSelectors();
-          closeUniversalSheet();
           switchView('companies');
-        };
+        }
+      };
 
-        window.purgeCompanyNodeEngine = (id) => {
-          if (confirm('CRITICAL WARN PROTOCOL: Destroying this node will wipe all database associations with this entity! Execute data deletion cascade?')) {
-            state.companies = state.companies.filter(c => c.id !== id);
-            state.documents = state.documents.filter(d => d.companyId !== id);
+      // =========================================================================
+      // FLAWLESS SYSTEM INTEGRATED INTERFACE LIGHT/DARK ENVIRONMENT SWITCH MATRICES
+      // =========================================================================
+      window.masterThemeToggler = () => {
+        const rootElement = document.documentElement;
+        const activeDarkStatusFlag = rootElement.classList.contains('dark');
 
-            if (state.activeCompanyId === id) {
-              state.activeCompanyId = state.companies[0]?.id || null;
-            }
+        const nextStateThemeString = activeDarkStatusFlag ? 'light' : 'dark';
 
-            commitStateToStorage();
-            syncDropdownSelectors();
-            switchView('companies');
-          }
-        };
+        rootElement.classList.toggle('dark', !activeDarkStatusFlag);
+        rootElement.classList.toggle('light', activeDarkStatusFlag);
 
-        // =========================================================================
-        // FLAWLESS SYSTEM INTEGRATED INTERFACE LIGHT/DARK ENVIRONMENT SWITCH MATRICES
-        // =========================================================================
-        window.masterThemeToggler = () => {
-          const rootElement = document.documentElement;
-          const activeDarkStatusFlag = rootElement.classList.contains('dark');
+        localStorage.setItem('bf_premium_theme_state_v2', nextStateThemeString);
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute('content', nextStateThemeString === 'dark' ? '#000000' : '#f5f5f7');
+        }
+      };
 
-          const nextStateThemeString = activeDarkStatusFlag ? 'light' : 'dark';
+      // =========================================================================
+      // COLD INITIALIZATION LIFECYCLE BOOT LOOPS
+      // =========================================================================
+      (function bootSequenceSystemLoop() {
+        // Evaluate systemic local environmental theme parameters safely
+        const savedCacheEnvironmentTheme = localStorage.getItem('bf_premium_theme_state_v2') || 'light';
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(savedCacheEnvironmentTheme);
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute('content', savedCacheEnvironmentTheme === 'dark' ? '#000000' : '#f5f5f7');
+        }
 
-          rootElement.classList.toggle('dark', !activeDarkStatusFlag);
-          rootElement.classList.toggle('light', activeDarkStatusFlag);
-
-          localStorage.setItem('bf_premium_theme_state_v2', nextStateThemeString);
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', nextStateThemeString === 'dark' ? '#000000' : '#f5f5f7');
-        };
-
-        // =========================================================================
-        // COLD INITIALIZATION LIFECYCLE BOOT LOOPS
-        // =========================================================================
-        (function bootSequenceSystemLoop() {
-          // Evaluate systemic local environmental theme parameters safely
-          const savedCacheEnvironmentTheme = localStorage.getItem('bf_premium_theme_state_v2') || 'light';
-          document.documentElement.classList.remove('light', 'dark');
-          document.documentElement.classList.add(savedCacheEnvironmentTheme);
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', savedCacheEnvironmentTheme === 'dark' ? '#000000' : '#f5f5f7');
-
-          // Build view state environments dynamically
-          syncDropdownSelectors();
-          switchView('dashboard');
-        })();
-
+        // Build view state environments dynamically
+        syncDropdownSelectors();
+        switchView('dashboard');
       })();
+
+    })();
   </script>
 </body>
 
