@@ -29,6 +29,7 @@
 
   <script src="https://cdn.tailwindcss.com">
   </script>
+  <link rel="manifest" href="/manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
 
@@ -1745,5 +1746,122 @@
     })();
   </script>
 </body>
+
+<script>
+  // PWA Installation Prompt
+  let deferredPrompt;
+
+  // Listen for the beforeinstallprompt event
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent Chrome 76+ from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later
+    deferredPrompt = e;
+    
+    // Show the install button or prompt
+    showInstallPrompt();
+  });
+
+  // Function to show the install prompt
+  function showInstallPrompt() {
+    // Check if the app is already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      return; // Already installed
+    }
+
+    // Create a custom install banner
+    const installBanner = document.createElement('div');
+    installBanner.id = 'installBanner';
+    installBanner.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 400px;
+      width: 90%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-system);
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    `;
+
+    installBanner.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+        <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#0071e3,#af52de);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:20px;flex-shrink:0;">B</div>
+        <div style="min-width:0;">
+          <div style="font-weight:600;font-size:14px;color:var(--text-primary);">Install BizFlow</div>
+          <div style="font-size:12px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Get the full app experience</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button onclick="dismissInstallPrompt()" style="padding:8px 12px;border:none;background:transparent;color:var(--text-secondary);font-weight:600;font-size:13px;cursor:pointer;border-radius:8px;">Later</button>
+        <button id="installBtn" style="padding:8px 16px;border:none;background:#0071e3;color:white;font-weight:600;font-size:13px;border-radius:10px;cursor:pointer;box-shadow:0 2px 8px rgba(0,113,227,0.3);">Install</button>
+      </div>
+    `;
+
+    document.body.appendChild(installBanner);
+
+    // Add click handler for install button
+    document.getElementById('installBtn').addEventListener('click', async () => {
+      if (deferredPrompt) {
+        // Show the install prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        const choiceResult = await deferredPrompt.userChoice;
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+          dismissInstallPrompt();
+        } else {
+          console.log('User dismissed the install prompt');
+        }
+        deferredPrompt = null;
+      }
+    });
+
+    // Add animation keyframes
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateX(-50%) translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Function to dismiss the install banner
+  window.dismissInstallPrompt = function() {
+    const banner = document.getElementById('installBanner');
+    if (banner) {
+      banner.style.opacity = '0';
+      banner.style.transform = 'translateX(-50%) translateY(20px)';
+      setTimeout(() => banner.remove(), 400);
+    }
+  };
+
+  // Handle successful installation
+  window.addEventListener('appinstalled', (evt) => {
+    console.log('BizFlow was installed successfully!');
+    dismissInstallPrompt();
+  });
+
+  // Check if app is already in standalone mode on load
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    console.log('App is already installed and running in standalone mode');
+  }
+</script>
 
 </html>
