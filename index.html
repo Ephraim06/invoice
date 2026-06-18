@@ -281,6 +281,7 @@
     #mobile-view-viewport {
       padding-top: calc(36px + env(safe-area-inset-top, 0px));
       padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+      margin-top: 100px;
     }
 
     @media (max-width: 640px) {
@@ -513,14 +514,14 @@
             </svg>
           </button>
           <button onclick="openNewDocumentForm()"
-            class="p-2.5 rounded-full bg-ios-blue text-white shadow-md shadow-blue-500/20 font-bold text-sm">
-            ＋
+            class="p-2.5 rounded-full bg-ios-blue text-white shadow-md shadow-blue-500/20 text-sm">
+             + <span class="sm:inline">New</span>
           </button>
         </div>
       </div>
       <div class="flex items-center gap-2 w-full">
         <select id="mobileCompanySelect"
-          class="ios-input py-2 px-3 text-xs font-bold flex-1 bg-[var(--bg-system)]"></select>
+          class="py-2 px-3 text-xs font-bold flex-1 bg-[var(--bg-system)]"></select>
       </div>
     </header>
 
