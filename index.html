@@ -1,0 +1,2695 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+  <!-- Open Graph / Social Media Meta Tags -->
+<meta property="og:title" content="BizFlow • Invoices made simple" />
+<meta property="og:description" content="Streamline your business operations with BizFlow - manage invoices, quotes, companies, and financial analytics all in one place." />
+<meta property="og:type" content="website" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:site_name" content="BizFlow" />
+<meta property="og:locale" content="en_ZA" />
+
+<!-- Twitter Card Tags -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="BizFlow • Invoices made simple" />
+<meta name="twitter:description" content="Streamline your business operations with BizFlow - manage invoices, quotes, companies, and financial analytics all in one place." />
+
+
+<!-- Additional SEO / Social Tags -->
+<meta name="description" content="BizFlow - Business management platform for invoicing, quotes, company management, and financial analytics. Built for South African businesses." />
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f5f7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>BizFlow • Invoices made simple</title>
+
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link rel="manifest" href="/manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+  </script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Montserrat', 'sans-serif'] },
+          colors: {
+            ios: {
+              blue: '#0071e3',
+              green: '#34c759',
+              orange: '#ff9500',
+              red: '#ff3b30',
+              purple: '#af52de',
+              teal: '#5ac8fa',
+              gray: '#86868b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg-system: #f5f5f7;
+      --bg-card: #ffffff;
+      --text-primary: #1d1d1f;
+      --text-secondary: #86868b;
+      --border-system: #e5e5ea;
+      --ios-blur: rgba(255, 255, 255, 0.8);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .dark {
+      --bg-system: #000000;
+      --bg-card: #1c1c1e;
+      --text-primary: #f5f5f7;
+      --text-secondary: #98989d;
+      --border-system: #2c2c2e;
+      --ios-blur: rgba(28, 28, 30, 0.8);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-system);
+      color: var(--text-primary);
+      font-family: 'Montserrat', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      height: 100vh;
+      height: 100dvh;
+      padding: 0;
+      margin: 0;
+      position: relative;
+    }
+
+    /* iOS Glassmorphism Effects */
+    .ios-blur-header {
+      background: var(--ios-blur);
+      backdrop-filter: blur(20px) saturate(190%);
+      -webkit-backdrop-filter: blur(20px) saturate(190%);
+    }
+
+    .ios-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-system);
+      border-radius: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s, border-color 0.4s;
+    }
+
+    .dark .ios-card {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .ios-card:active {
+      transform: scale(0.995);
+    }
+
+    .document-card {
+      position: relative;
+      overflow: hidden;
+      animation: cardRise 0.45s both;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .document-card::before {
+      content: '';
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: var(--document-accent, #0071e3);
+    }
+
+    .document-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.08);
+      border-color: color-mix(in srgb, var(--document-accent, #0071e3) 35%, var(--border-system));
+    }
+
+    .accent-swatch {
+      width: 34px;
+      height: 34px;
+      border: 3px solid var(--bg-card);
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px var(--border-system);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .accent-swatch:hover {
+      transform: scale(1.08);
+    }
+
+    .accent-swatch.selected {
+      box-shadow: 0 0 0 3px var(--text-primary);
+      transform: scale(1.05);
+    }
+
+    .filter-chip {
+      border: 1px solid var(--border-system);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+    }
+
+    .filter-chip.active {
+      border-color: #0071e3;
+      background: #0071e3;
+      color: #ffffff;
+      box-shadow: 0 5px 14px rgba(0, 113, 227, 0.2);
+    }
+
+    /* Form Fields Styling */
+    .ios-input {
+      background: var(--bg-system);
+      border: 1px solid var(--border-system);
+      color: var(--text-primary);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    .ios-input:focus {
+      border-color: #0071e3;
+      background: var(--bg-card);
+      box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+      outline: none;
+    }
+
+    .ios-input-sm {
+      padding: 0.5rem 0.75rem;
+      font-size: 12px;
+    }
+
+    /* iOS Interactive Switches */
+    .ios-switch {
+      width: 51px;
+      height: 31px;
+      background: #e5e5ea;
+      border-radius: 16px;
+      position: relative;
+      transition: background 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      flex-shrink: 0;
+      border: 0;
+      padding: 0;
+    }
+
+    .dark .ios-switch {
+      background: #3a3a3c;
+    }
+
+    .ios-switch.active {
+      background: #34c759;
+    }
+
+    .ios-switch::after {
+      content: '';
+      position: absolute;
+      width: 27px;
+      height: 27px;
+      background: #ffffff;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .ios-switch.active::after {
+      transform: translateX(20px);
+    }
+
+    /* Apex-inspired Smooth Animation Graph Elements */
+    .apex-bar-fill {
+      transition: height 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .apex-tooltip {
+      display: none;
+      animation: fadeIn 0.2s ease forwards;
+    }
+
+    .apex-interactive-node:hover .apex-tooltip {
+      display: block;
+    }
+
+    /* Navigation State Styling */
+    .desktop-nav-active {
+      background-color: #0071e3 !important;
+      color: #ffffff !important;
+    }
+
+    .mobile-nav-active {
+      color: #0071e3 !important;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Seamless Hide Scrollbars */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Comfortable, consistent modal layout */
+    #sheetContentFrame {
+      max-width: 960px !important;
+      width: min(94%, 960px) !important;
+      max-height: 90vh !important;
+      max-height: 90dvh !important;
+    }
+
+    @keyframes cardRise {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    .form-section {
+      padding: 16px;
+      border: 1px solid var(--border-system);
+      border-radius: 14px;
+      background: var(--bg-system);
+    }
+
+    .form-section-title {
+      display: block;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .item-grid {
+      display: grid;
+      grid-template-columns: minmax(130px, .8fr) minmax(190px, 1.4fr) 90px 130px 40px;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .item-grid-heading {
+      padding: 0 10px;
+      color: var(--text-secondary);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .modal-actions {
+      position: sticky;
+      bottom: -24px;
+      z-index: 5;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin: 20px -24px -24px;
+      padding: 14px 24px;
+      border-top: 1px solid var(--border-system);
+      background: var(--ios-blur);
+      backdrop-filter: blur(20px);
+    }
+
+    @media (max-width: 640px) {
+      #sheetContentFrame {
+        max-width: 95% !important;
+        width: 95% !important;
+        max-height: 92vh !important;
+        max-height: 92dvh !important;
+        border-radius: 20px;
+      }
+      #universalSheetModal {
+        padding: 0;
+        align-items: flex-end;
+      }
+      #sheetContentFrame {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 94dvh !important;
+        border-radius: 24px 24px 0 0;
+        border-bottom: 0;
+      }
+      .item-grid {
+        grid-template-columns: 1fr 1fr 40px;
+      }
+      .item-grid-heading {
+        display: none;
+      }
+      .dynamic-item-form-row .line-name-wrap,
+      .dynamic-item-form-row .line-description-wrap {
+        grid-column: 1 / -1;
+      }
+      .dynamic-item-form-row .line-qty-wrap,
+      .dynamic-item-form-row .line-price-wrap {
+        grid-column: span 1;
+      }
+      .modal-actions {
+        bottom: -16px;
+        margin: 16px -16px -16px;
+        padding: 12px 16px;
+      }
+    }
+
+    /* Logo upload preview */
+    .logo-preview {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border-system);
+      background: var(--bg-system);
+      flex-shrink: 0;
+    }
+
+    .logo-upload-btn {
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 10px;
+      background: var(--bg-system);
+      border: 1px solid var(--border-system);
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .logo-upload-btn:hover {
+      background: var(--border-system);
+    }
+
+    /* Mobile specific fixes */
+    #mobile-app-shell .ios-input {
+      font-size: 14px;
+      padding: 0.6rem 0.85rem;
+    }
+
+    #mobile-app-shell select.ios-input {
+      padding-right: 2rem;
+      appearance: auto;
+      -webkit-appearance: auto;
+    }
+
+    /* Fix for modal scroll */
+    #universalSheetPayload .ios-input {
+      font-size: 14px;
+    }
+
+    /* Ensure no overlap on mobile header */
+    #mobile-view-viewport {
+      padding-top: calc(36px + env(safe-area-inset-top, 0px));
+      padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+      margin-top: 100px;
+    }
+
+    @media (max-width: 640px) {
+      #mobile-view-viewport {
+        padding-top: 32px;
+        padding-bottom: 80px;
+      }
+    }
+
+    /* Better card spacing on mobile */
+    @media (max-width: 640px) {
+      .ios-card {
+        border-radius: 12px;
+      }
+      #desktop-view-viewport,
+      #mobile-view-viewport {
+        padding-left: 12px;
+        padding-right: 12px;
+        margin-top: 100px;
+      }
+      .grid {
+        gap: 12px;
+      }
+    }
+
+    /* Fix for modal form elements */
+    #universalSheetPayload .space-y-3>*+* {
+      margin-top: 0.75rem;
+    }
+
+    #universalSheetPayload .grid {
+      gap: 0.75rem;
+    }
+
+    /* Scrollable container for items */
+    #form_itemsTrackContainer {
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    #universalSheetModal.pointer-events-none #sheetContentFrame {
+      transform: translateY(32px) scale(0.98);
+      opacity: 0;
+    }
+
+    #universalSheetModal:not(.pointer-events-none) #sheetContentFrame {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    /* Better touch targets */
+    button,
+    .logo-upload-btn,
+    .ios-switch {
+      touch-action: manipulation;
+    }
+
+    /* Improve select appearance on mobile */
+    select.ios-input {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2386868b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    /* Fix dark mode select arrow */
+    .dark select.ios-input {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2398989d' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    }
+
+    /* Ensure proper spacing for company items */
+    .company-item {
+      padding: 12px 14px;
+    }
+
+    @media (max-width: 640px) {
+      .company-item {
+        padding: 10px 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .company-item .company-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+
+    /* Dashboard card improvements */
+    .stat-card {
+      padding: 16px;
+    }
+
+    @media (max-width: 480px) {
+      .stat-card {
+        padding: 12px 14px;
+      }
+      .stat-card h3 {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="h-screen overflow-hidden antialiased select-none">
+
+  <div id="desktop-app-shell" class="hidden lg:flex h-full w-full overflow-hidden">
+    <aside
+      class="w-72 border-r border-[var(--border-system)] bg-[var(--bg-card)] flex flex-col justify-between p-6 transition-colors duration-400 z-30 flex-shrink-0">
+      <div class="space-y-6">
+        <div class="flex items-center gap-3 px-2">
+          <div
+            class="h-10 w-10 rounded-xl bg-ios-blue flex items-center justify-center text-white shadow-md flex-shrink-0">
+            <span class="text-xl font-bold">B</span>
+          </div>
+          <div class="min-w-0">
+            <h1 class="text-lg font-bold tracking-tight truncate">BizFlow</h1>
+            <p class="text-[10px] text-ios-gray font-semibold">Simple business admin</p>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+  <label class="text-[11px] font-bold text-ios-gray px-2 block">Working as</label>
+  <div class="relative">
+    <select id="desktopCompanySelect"
+      class="w-full appearance-none bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-system)] rounded-xl py-3 px-4 pr-12 text-sm font-semibold cursor-pointer transition-all duration-200 focus:outline-none focus:border-ios-blue focus:ring-2 focus:ring-ios-blue/20 hover:border-ios-blue/50">
+    </select>
+  </div>
+</div>
+
+        <nav class="space-y-1">
+          <label class="text-[11px] font-bold text-ios-gray px-2 block mb-2">Menu</label>
+          <button onclick="switchView('dashboard')"
+            class="d-nav-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-semibold text-ios-gray hover:bg-[var(--bg-system)] transition-all"
+            data-nav="dashboard">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path
+                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z">
+              </path>
+            </svg>
+            <span class="truncate">Home</span>
+          </button>
+          <button onclick="switchView('documents')"
+            class="d-nav-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-semibold text-ios-gray hover:bg-[var(--bg-system)] transition-all"
+            data-nav="documents">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+              </path>
+            </svg>
+            <span class="truncate">Invoices & quotes</span>
+          </button>
+          <button onclick="switchView('reports')"
+            class="d-nav-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-semibold text-ios-gray hover:bg-[var(--bg-system)] transition-all"
+            data-nav="reports">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+              </path>
+            </svg>
+            <span class="truncate">Payments</span>
+          </button>
+          <button onclick="switchView('companies')"
+            class="d-nav-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-semibold text-ios-gray hover:bg-[var(--bg-system)] transition-all"
+            data-nav="companies">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+              </path>
+            </svg>
+            <span class="truncate">Business settings</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="space-y-2 pt-4 border-t border-[var(--border-system)]">
+        <p class="text-[10px] font-bold text-ios-gray px-1 mb-1">CREATE</p>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="openNewDocumentForm('invoice')"
+            class="bg-ios-blue text-white font-bold py-3 px-2 rounded-xl shadow-lg shadow-blue-500/10 hover:-translate-y-0.5 transition-all text-xs">
+            + Invoice
+          </button>
+          <button onclick="openNewDocumentForm('quote')"
+            class="border border-ios-blue/30 bg-ios-blue/5 text-ios-blue font-bold py-3 px-2 rounded-xl hover:-translate-y-0.5 transition-all text-xs">
+            + Quote
+          </button>
+        </div>
+        <button onclick="masterThemeToggler()"
+          class="w-full border border-[var(--border-system)] bg-[var(--bg-system)] text-[var(--text-primary)] font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all hover:bg-[var(--border-system)]">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+          </svg>
+          Change appearance
+        </button>
+      </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col overflow-hidden min-w-0">
+      <header
+        class="h-20 border-b border-[var(--border-system)] ios-blur-header flex items-center justify-between px-6 md:px-8 z-20 flex-shrink-0">
+        <div class="flex items-center gap-4 min-w-0">
+          <h2 id="desktop-view-title" class="text-xl font-extrabold tracking-tight truncate">Your workspace</h2>
+        </div>
+        <div id="desktop-realtime-badge"
+          class="px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-2 flex-shrink-0">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span> <span class="hidden sm:inline">Saved on this device</span>
+        </div>
+      </header>
+
+      <div id="desktop-view-viewport" class="flex-1 overflow-y-auto p-6 md:p-8 no-scrollbar">
+      </div>
+    </div>
+  </div>
+
+
+  <div id="mobile-app-shell" class="flex lg:hidden h-full w-full flex-col overflow-hidden">
+    <header
+      class="ios-blur-header border-b border-[var(--border-system)] pt-[calc(12px+env(safe-area-inset-top,0px))] pb-3 px-4 fixed top-0 left-0 right-0 z-30 flex flex-col gap-2">
+      <div class="flex justify-between items-center">
+        <h1 id="mobile-view-title" class="text-xl font-black tracking-tight">Workspace</h1>
+        <div class="flex items-center gap-1.5">
+          <button onclick="masterThemeToggler()"
+            class="p-2.5 rounded-full bg-[var(--border-system)] text-[var(--text-primary)] transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+          </button>
+          <button onclick="openCreateMenu()"
+            class="p-2.5 rounded-full bg-ios-blue text-white shadow-md shadow-blue-500/20 text-sm">
+             + <span class="sm:inline">Create</span>
+          </button>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 w-full">
+        <select id="mobileCompanySelect"
+          class="py-2 px-3 text-xs font-bold flex-1 bg-[var(--bg-system)]"></select>
+      </div>
+    </header>
+
+    <div id="mobile-view-viewport" class="flex-1 overflow-y-auto pt-[calc(100px+env(safe-area-inset-top,0px))] pb-[calc(72px+env(safe-area-inset-bottom,0px))] px-4 no-scrollbar">
+    </div>
+
+    <nav
+      class="ios-blur-header border-t border-[var(--border-system)] h-[calc(64px+env(safe-area-inset-bottom,0px))] fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around pb-[env(safe-area-inset-bottom,0px)] pt-2">
+      <button onclick="switchView('dashboard')"
+        class="m-nav-btn flex flex-col items-center justify-center text-ios-gray transition-all px-2" data-nav="dashboard">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path
+            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z">
+          </path>
+        </svg>
+        <span class="text-[8px] font-bold uppercase tracking-wider mt-0.5">Home</span>
+      </button>
+      <button onclick="switchView('documents')"
+        class="m-nav-btn flex flex-col items-center justify-center text-ios-gray transition-all px-2" data-nav="documents">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+          </path>
+        </svg>
+        <span class="text-[8px] font-bold uppercase tracking-wider mt-0.5">Invoices</span>
+      </button>
+      <button onclick="switchView('reports')"
+        class="m-nav-btn flex flex-col items-center justify-center text-ios-gray transition-all px-2" data-nav="reports">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+          </path>
+        </svg>
+        <span class="text-[8px] font-bold uppercase tracking-wider mt-0.5">Payments</span>
+      </button>
+      <button onclick="switchView('companies')"
+        class="m-nav-btn flex flex-col items-center justify-center text-ios-gray transition-all px-2" data-nav="companies">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path
+            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+          </path>
+        </svg>
+        <span class="text-[8px] font-bold uppercase tracking-wider mt-0.5">Business</span>
+      </button>
+    </nav>
+  </div>
+
+
+  <div id="universalSheetModal" role="dialog" aria-modal="true" aria-labelledby="universalSheetTitle"
+    onclick="if (event.target === this) closeUniversalSheet()"
+    class="fixed inset-0 bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-3">
+    <div id="sheetContentFrame"
+      class="bg-[var(--bg-card)] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl scale-95 translate-y-4 transition-all duration-300 border border-[var(--border-system)]">
+      <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-[var(--border-system)] ios-blur-header flex items-center justify-between flex-shrink-0">
+        <h3 id="universalSheetTitle" class="text-sm sm:text-base font-bold tracking-tight text-ios-blue truncate">Form
+          Details</h3>
+        <button onclick="closeUniversalSheet()"
+          aria-label="Close" class="h-9 w-9 rounded-full bg-[var(--bg-system)] text-[var(--text-primary)] font-bold text-lg flex items-center justify-center hover:bg-[var(--border-system)] transition-all flex-shrink-0">&times;</button>
+      </div>
+      <div id="universalSheetPayload" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 no-scrollbar">
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    (() => {
+      // Internal Local Encapsulated Crypt-Safe Keys
+      const STORAGE_COMPANIES_KEY = 'bf_premium_companies_v2';
+      const STORAGE_DOCUMENTS_KEY = 'bf_premium_documents_v2';
+      const STORAGE_ACTIVE_COMPANY_KEY = 'bf_active_company_v2';
+
+      let storageReadWarning = '';
+      const readStoredArray = key => {
+        try {
+          const parsedValue = JSON.parse(localStorage.getItem(key) || '[]');
+          if (!Array.isArray(parsedValue)) throw new Error('Saved value is not a list');
+          return parsedValue;
+        } catch (error) {
+          storageReadWarning = 'Some older saved data could not be read. New changes can still be saved.';
+          console.error(`Could not read ${key}:`, error);
+          return [];
+        }
+      };
+
+      // Core Runtime Reactive Memory Map State
+      let state = {
+        companies: readStoredArray(STORAGE_COMPANIES_KEY),
+        documents: readStoredArray(STORAGE_DOCUMENTS_KEY),
+        activeCompanyId: null,
+        activeWorkspaceView: 'dashboard',
+        editingTargetId: null,
+        documentSearch: '',
+        documentTypeFilter: 'all',
+        documentStatusFilter: 'all',
+        documentSort: 'newest'
+      };
+
+      // Ensure data initialization mapping vectors exist
+      if (state.companies.length > 0) {
+        const savedActiveCompanyId = localStorage.getItem(STORAGE_ACTIVE_COMPANY_KEY);
+        state.activeCompanyId = state.companies.some(company => company.id === savedActiveCompanyId)
+          ? savedActiveCompanyId
+          : state.companies[0].id;
+      }
+
+      // Format Engine Methods
+      const formatZAR = n => 'R ' + (n || 0).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const sanitizeHtmlString = t => String(t || '').replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;',
+        '"': '&quot;' })[m]);
+      const formatMultilineText = text => sanitizeHtmlString(text).replace(/\r?\n/g, '<br>');
+      const ACCENT_COLORS = ['#0071e3', '#5856d6', '#af52de', '#e5484d', '#ff9500', '#168f5b', '#0f766e', '#334155'];
+      const normalizeAccentColor = color => /^#[0-9a-f]{6}$/i.test(color || '') ? color.toLowerCase() : '#0071e3';
+      const renderAccentPicker = (inputId, selectedColor, previewId) => {
+        const normalizedColor = normalizeAccentColor(selectedColor);
+        return `
+          <div class="flex flex-wrap items-center gap-3">
+            ${ACCENT_COLORS.map(color => `
+              <button type="button" aria-label="Use ${color}" class="accent-swatch ${color === normalizedColor ? 'selected' : ''}"
+                style="background:${color}" onclick="selectAccentColor('${inputId}', '${color}', '${previewId}', this)"></button>
+            `).join('')}
+            <label class="flex items-center gap-2 pl-2 text-[10px] font-bold text-ios-gray">
+              Custom
+              <input type="color" value="${normalizedColor}" class="h-9 w-11 rounded cursor-pointer"
+                onchange="selectAccentColor('${inputId}', this.value, '${previewId}')">
+            </label>
+          </div>
+          <input id="${inputId}" type="hidden" value="${normalizedColor}">
+        `;
+      };
+
+      window.selectAccentColor = (inputId, color, previewId, sourceButton = null) => {
+        const normalizedColor = normalizeAccentColor(color);
+        const input = document.getElementById(inputId);
+        if (input) input.value = normalizedColor;
+        const picker = input?.previousElementSibling;
+        picker?.querySelectorAll('.accent-swatch').forEach(button => button.classList.remove('selected'));
+        const customColorInput = picker?.querySelector('input[type="color"]');
+        if (customColorInput) customColorInput.value = normalizedColor;
+        const preview = document.getElementById(previewId);
+        if (preview) {
+          preview.style.borderColor = normalizedColor;
+          preview.style.setProperty('--preview-accent', normalizedColor);
+        }
+        sourceButton?.classList.add('selected');
+      };
+
+      // Compute Financial Metrics Vector System
+      const computeDocumentFinancials = (items, useVat) => {
+        const subtotal = (items || []).reduce((acc, current) => acc + ((current.qty || 0) * (current.price || 0)), 0);
+        const vatVal = useVat ? subtotal * 0.15 : 0;
+        return { subtotal, vat: vatVal, total: subtotal + vatVal };
+      };
+
+      const createUniqueId = prefix => {
+        const uniquePart = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        return `${prefix}-${uniquePart}`;
+      };
+
+      const showStorageProblem = error => {
+        console.error('Could not save local data:', error);
+        const message = error?.name === 'QuotaExceededError'
+          ? 'Your browser storage is full. Remove a large logo or delete documents you no longer need, then try again.'
+          : 'This browser is blocking local storage. Allow site data for BizFlow, then try again.';
+        const modalIsOpen = !document.getElementById('universalSheetModal')?.classList.contains('pointer-events-none');
+        if (modalIsOpen && window.showFormError) showFormError(message);
+        else if (window.showToast) showToast(message);
+      };
+
+      // Save and verify a complete snapshot. If one write fails, restore the previous data.
+      const persistStateSnapshot = (companies, documents, activeCompanyId) => {
+        const nextValues = {
+          [STORAGE_COMPANIES_KEY]: JSON.stringify(companies),
+          [STORAGE_DOCUMENTS_KEY]: JSON.stringify(documents),
+          [STORAGE_ACTIVE_COMPANY_KEY]: activeCompanyId || ''
+        };
+        const previousValues = {};
+
+        try {
+          Object.keys(nextValues).forEach(key => {
+            previousValues[key] = localStorage.getItem(key);
+            localStorage.setItem(key, nextValues[key]);
+          });
+          Object.keys(nextValues).forEach(key => {
+            if (localStorage.getItem(key) !== nextValues[key]) throw new Error('Saved data could not be verified');
+          });
+          return true;
+        } catch (error) {
+          Object.keys(previousValues).forEach(key => {
+            try {
+              if (previousValues[key] === null) localStorage.removeItem(key);
+              else localStorage.setItem(key, previousValues[key]);
+            } catch (rollbackError) {
+              console.error('Could not restore previous local data:', rollbackError);
+            }
+          });
+          showStorageProblem(error);
+          return false;
+        }
+      };
+
+      // Get Document Array Ref Filtered by Active Corporate Context
+      const getActiveContextDocuments = () => state.documents.filter(d => d.companyId === state.activeCompanyId);
+
+      // System Navigation Interface Controller View Switcher
+      window.switchView = (viewKey) => {
+        state.activeWorkspaceView = viewKey;
+
+        // Compute Visual Hierarchy Titles Based on Context mapping
+        const titleMap = {
+          dashboard: "Your business at a glance",
+          documents: "Invoices and quotes",
+          reports: "Money received",
+          companies: "Your businesses"
+        };
+
+        // Update Desktop and Mobile View Titles
+        const formattedTitle = titleMap[viewKey] || "Your workspace";
+        const titleEl = document.getElementById('desktop-view-title');
+        if (titleEl) titleEl.textContent = formattedTitle;
+        const mobileTitle = document.getElementById('mobile-view-title');
+        if (mobileTitle) mobileTitle.textContent = formattedTitle.split(' ')[0] || "Workspace";
+
+        // Toggle Styling indicators on Desktop Navigation
+        document.querySelectorAll('.d-nav-btn').forEach(btn => {
+          if (btn.getAttribute('data-nav') === viewKey) {
+            btn.classList.add('desktop-nav-active');
+            btn.classList.remove('text-ios-gray');
+          } else {
+            btn.classList.remove('desktop-nav-active');
+            btn.classList.add('text-ios-gray');
+          }
+        });
+
+        // Toggle Styling indicators on Mobile Navigation Bar
+        document.querySelectorAll('.m-nav-btn').forEach(btn => {
+          if (btn.getAttribute('data-nav') === viewKey) {
+            btn.classList.add('mobile-nav-active');
+          } else {
+            btn.classList.remove('mobile-nav-active');
+          }
+        });
+
+        // Trigger Sub-View Generator Rendering Engines
+        renderActiveViewportData();
+      };
+
+      // Sync Selector Syncing Loops across screens
+      const syncDropdownSelectors = () => {
+        const buildOptions = () => state.companies.map(c =>
+          `<option value="${c.id}">${sanitizeHtmlString(c.name)}</option>`).join('') ||
+          `<option value="">No business added yet</option>`;
+
+        const dSelect = document.getElementById('desktopCompanySelect');
+        const mSelect = document.getElementById('mobileCompanySelect');
+
+        if (dSelect) {
+          dSelect.innerHTML = buildOptions();
+          dSelect.value = state.activeCompanyId || '';
+        }
+        if (mSelect) {
+          mSelect.innerHTML = buildOptions();
+          mSelect.value = state.activeCompanyId || '';
+        }
+      };
+
+      // Direct Event Hook Updaters
+      const dSelect = document.getElementById('desktopCompanySelect');
+      const mSelect = document.getElementById('mobileCompanySelect');
+      const changeActiveCompany = nextCompanyId => {
+        if (!persistStateSnapshot(state.companies, state.documents, nextCompanyId)) {
+          syncDropdownSelectors();
+          return;
+        }
+        state.activeCompanyId = nextCompanyId;
+        syncDropdownSelectors();
+        renderActiveViewportData();
+      };
+      if (dSelect) dSelect.onchange = event => changeActiveCompany(event.target.value);
+      if (mSelect) mSelect.onchange = event => changeActiveCompany(event.target.value);
+
+      // =========================================================================
+      // RENDERING ENGINE ROUTING HUB
+      // =========================================================================
+      const renderActiveViewportData = () => {
+        const activeView = state.activeWorkspaceView;
+        let htmlPayload = ``;
+
+        if (!state.activeCompanyId && activeView !== 'companies') {
+          htmlPayload = `
+            <div class="flex flex-col items-center justify-center py-12 sm:py-20 text-center space-y-4">
+              <div class="w-16 h-16 rounded-full bg-ios-orange/10 text-ios-orange flex items-center justify-center text-2xl font-bold animate-bounce">⚠️</div>
+              <h3 class="text-base sm:text-lg font-bold">Add your business to get started</h3>
+              <p class="text-xs text-ios-gray max-w-sm px-4">We use these details on your invoices and quotes.</p>
+              <button onclick="openNewCompanyNodeForm()" class="bg-ios-blue text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md">Add my business</button>
+            </div>`;
+          const desktopView = document.getElementById('desktop-view-viewport');
+          const mobileView = document.getElementById('mobile-view-viewport');
+          if (desktopView) desktopView.innerHTML = htmlPayload;
+          if (mobileView) mobileView.innerHTML = htmlPayload;
+          return;
+        }
+
+        switch (activeView) {
+          case 'dashboard':
+            renderDashboardWorkspace();
+            break;
+          case 'documents':
+            renderDocumentsWorkspace();
+            break;
+          case 'reports':
+            renderReportsWorkspace();
+            break;
+          case 'companies':
+            renderCompaniesWorkspace();
+            break;
+        }
+      };
+
+      // =========================================================================
+      // EXECUTIVE CORE MATRIX (DASHBOARD) DESIGN & IMPLEMENTATION
+      // =========================================================================
+      const renderDashboardWorkspace = () => {
+        const docs = getActiveContextDocuments();
+
+        // CRITICAL UPDATE SPECIFICATION:
+        // Realized Earnings (Invoices) vs Pipeline Futures (Quotes)
+        const totalPaidRealized = docs.filter(d => d.type === 'invoice' && d.isPaid).reduce((acc, d) => acc +
+          computeDocumentFinancials(d.items, d.useVat).total, 0);
+        const totalOutstandingInvoiced = docs.filter(d => d.type === 'invoice' && !d.isPaid).reduce((acc, d) => acc +
+          computeDocumentFinancials(d.items, d.useVat).total, 0);
+
+        // Active pipeline calculations (Unconverted quotes represent theoretical monies to be made)
+        const uncalculatedPipelineQuotes = docs.filter(d => d.type === 'quote' && !d.isConverted).reduce((acc, d) => acc +
+          computeDocumentFinancials(d.items, d.useVat).total, 0);
+
+        // Combined data loop processing
+        const recentQuotes = docs.filter(d => d.type === 'quote').slice(-4).reverse();
+        const pendingInvoices = docs.filter(d => d.type === 'invoice' && !d.isPaid).slice(-4).reverse();
+
+        const layoutHtml = `
+          <div class="ios-card p-4 sm:p-5 mb-5 sm:mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-ios-blue/10 to-ios-purple/5">
+            <div>
+              <h3 class="text-base sm:text-lg font-extrabold">What would you like to do?</h3>
+              <p class="text-xs text-ios-gray mt-1">Create a document now, or check the latest totals below.</p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="openNewDocumentForm('invoice')" class="flex-1 sm:flex-none bg-ios-blue text-white px-4 py-3 rounded-xl text-xs font-bold shadow-md">+ New invoice</button>
+              <button onclick="openNewDocumentForm('quote')" class="flex-1 sm:flex-none bg-[var(--bg-card)] border border-ios-blue/30 text-ios-blue px-4 py-3 rounded-xl text-xs font-bold">+ New quote</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
+            <div class="ios-card stat-card flex flex-col justify-between space-y-1">
+              <div>
+                <p class="text-[9px] sm:text-[10px] font-bold text-ios-green tracking-wider uppercase">Money received</p>
+                <h3 class="text-base sm:text-xl font-extrabold tracking-tight mt-1 text-emerald-500">${formatZAR(totalPaidRealized)}</h3>
+              </div>
+              <span class="text-[8px] sm:text-[9px] font-medium text-ios-gray truncate">Paid invoices</span>
+            </div>
+            <div class="ios-card stat-card flex flex-col justify-between space-y-1">
+              <div>
+                <p class="text-[9px] sm:text-[10px] font-bold text-ios-blue tracking-wider uppercase">Still to be paid</p>
+                <h3 class="text-base sm:text-xl font-extrabold tracking-tight mt-1 text-ios-blue">${formatZAR(totalOutstandingInvoiced)}</h3>
+              </div>
+              <span class="text-[8px] sm:text-[9px] font-medium text-ios-gray truncate">Unpaid invoices</span>
+            </div>
+            <div class="ios-card stat-card flex flex-col justify-between space-y-1">
+              <div>
+                <p class="text-[9px] sm:text-[10px] font-bold text-ios-purple tracking-wider uppercase">Possible income</p>
+                <h3 class="text-base sm:text-xl font-extrabold tracking-tight mt-1 text-ios-purple">${formatZAR(uncalculatedPipelineQuotes)}</h3>
+              </div>
+              <span class="text-[8px] sm:text-[9px] font-medium text-ios-gray truncate">Quotes</span>
+            </div>
+            <div class="ios-card stat-card flex flex-col justify-between space-y-1">
+              <div>
+                <p class="text-[9px] sm:text-[10px] font-bold text-ios-gray tracking-wider uppercase">Documents</p>
+                <h3 class="text-base sm:text-xl font-extrabold tracking-tight mt-1">${docs.length} <span class="text-xs font-semibold text-ios-gray">files</span></h3>
+              </div>
+              <span class="text-[8px] sm:text-[9px] font-medium text-ios-gray truncate">Invoices and quotes</span>
+            </div>
+          </div>
+
+          <div class="ios-card p-4 sm:p-6 mb-5 sm:mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 sm:mb-6">
+              <div>
+                <h4 class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ios-gray">Invoice overview</h4>
+                <p class="text-[11px] sm:text-xs text-[var(--text-primary)] font-semibold">Compare recent invoice totals</p>
+              </div>
+              <div class="flex items-center gap-3 text-[9px] sm:text-[10px] font-bold">
+                <div class="flex items-center gap-1.5"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-ios-blue"></span> Invoice value</div>
+              </div>
+            </div>
+            
+            <div class="h-32 sm:h-44 w-full flex items-end gap-1.5 sm:gap-2.5 pt-3 sm:pt-4 border-b border-[var(--border-system)]" id="apexChartRenderTrack">
+              </div>
+          </div>
+
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+            <div class="ios-card p-4 sm:p-5">
+              <div class="flex justify-between items-center mb-3 pb-2 border-b border-[var(--border-system)]">
+                <h5 class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ios-gray">Recent quotes</h5>
+                <span class="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-ios-orange/10 text-ios-orange">Waiting for approval</span>
+              </div>
+              <div class="space-y-1.5">
+                ${recentQuotes.map(q => `
+                  <div class="flex justify-between items-center text-xs py-1.5 px-2 sm:px-3 rounded-lg bg-[var(--bg-system)] gap-2">
+                    <div class="min-w-0 flex-1">
+                      <p class="font-bold text-[11px] sm:text-xs truncate">${sanitizeHtmlString(q.clientName)}</p>
+                      <p class="text-[9px] sm:text-[10px] text-ios-gray mt-0.5 truncate">${q.documentNumber} • ${q.executionDate}</p>
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                      <p class="font-bold text-ios-purple text-[11px] sm:text-xs">${formatZAR(computeDocumentFinancials(q.items, q.useVat).total)}</p>
+                      <span class="text-[8px] sm:text-[9px] text-ios-gray italic">${q.isConverted ? 'Invoiced' : 'Waiting'}</span>
+                    </div>
+                  </div>
+                `).join('') || '<p class="text-xs text-ios-gray text-center py-4">No quotes yet.</p>'}
+              </div>
+            </div>
+
+            <div class="ios-card p-4 sm:p-5">
+              <div class="flex justify-between items-center mb-3 pb-2 border-b border-[var(--border-system)]">
+                <h5 class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ios-gray">Invoices waiting for payment</h5>
+                <span class="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-ios-blue/10 text-ios-blue">Unpaid</span>
+              </div>
+              <div class="space-y-1.5">
+                ${pendingInvoices.map(i => `
+                  <div class="flex justify-between items-center text-xs py-1.5 px-2 sm:px-3 rounded-lg bg-[var(--bg-system)] gap-2">
+                    <div class="min-w-0 flex-1">
+                      <p class="font-bold text-[11px] sm:text-xs truncate">${sanitizeHtmlString(i.clientName)}</p>
+                      <p class="text-[9px] sm:text-[10px] text-ios-gray mt-0.5 truncate">${i.documentNumber} • Due ${i.dueDate || 'N/A'}</p>
+                    </div>
+                    <p class="font-bold text-ios-red text-[11px] sm:text-xs flex-shrink-0">${formatZAR(computeDocumentFinancials(i.items, i.useVat).total)}</p>
+                  </div>
+                `).join('') || '<p class="text-xs text-ios-gray text-center py-4">Nothing is waiting for payment.</p>'}
+              </div>
+            </div>
+          </div>
+        `;
+
+        const desktopView = document.getElementById('desktop-view-viewport');
+        const mobileView = document.getElementById('mobile-view-viewport');
+        if (desktopView) desktopView.innerHTML = layoutHtml;
+        if (mobileView) mobileView.innerHTML = layoutHtml;
+
+        // Populate dynamic graph track vectors
+        const invoiceDocumentsList = docs.filter(d => d.type === 'invoice');
+        const maxVal = Math.max(...invoiceDocumentsList.map(d => computeDocumentFinancials(d.items, d.useVat).total), 1);
+
+        const graphTracks = document.querySelectorAll('#apexChartRenderTrack');
+        graphTracks.forEach(trackContainer => {
+          if (invoiceDocumentsList.length === 0) {
+            trackContainer.innerHTML =
+              `<div class="w-full h-full flex items-center justify-center text-xs text-ios-gray italic">Your invoice totals will appear here.</div>`;
+            return;
+          }
+
+          trackContainer.innerHTML = invoiceDocumentsList.slice(-14).map(d => {
+            const calculatedTotal = computeDocumentFinancials(d.items, d.useVat).total;
+            const percentageHeight = (calculatedTotal / maxVal) * 100;
+            const absoluteBarColor = d.isPaid ? 'bg-ios-green' : 'bg-ios-blue';
+
+            return `
+              <div class="flex-1 h-full flex flex-col justify-end items-center relative group apex-interactive-node cursor-pointer min-w-[12px]">
+                <div class="apex-tooltip absolute bottom-full mb-2 bg-slate-900 text-white text-[9px] sm:text-[10px] font-bold p-1.5 sm:p-2 rounded-lg shadow-xl z-40 pointer-events-none whitespace-nowrap">
+                  <p class="text-white">${sanitizeHtmlString(d.clientName)}</p>
+                  <p class="text-ios-teal font-extrabold mt-0.5">${formatZAR(calculatedTotal)}</p>
+                  <p class="text-[7px] sm:text-[8px] text-slate-400 mt-0.5">${d.isPaid ? 'Paid' : 'Unpaid'}</p>
+                </div>
+                
+                <div class="w-full ${absoluteBarColor} rounded-t-md opacity-85 group-hover:opacity-100 transition-all apex-bar-fill" style="height: 0.5%; min-height: 3px;" data-target-height="${Math.max(percentageHeight, 4)}"></div>
+                
+                <span class="text-[6px] sm:text-[8px] font-bold text-ios-gray mt-1 tracking-tighter truncate max-w-full">${d.documentNumber.slice(-4)}</span>
+              </div>
+            `;
+          }).join('');
+        });
+
+        // Trigger safe deferred UI layout paint height animation calculations
+        setTimeout(() => {
+          document.querySelectorAll('.apex-bar-fill').forEach(bar => {
+            const h = bar.getAttribute('data-target-height');
+            bar.style.height = h + '%';
+          });
+        }, 60);
+      };
+
+      // =========================================================================
+      // HYPER-LEDGER DOCUMENT ENGINE WORKSPACE
+      // =========================================================================
+      const renderDocumentsWorkspaceLegacy = () => {
+        const docs = getActiveContextDocuments().sort((a, b) => new Date(b.createdTimestamp) - new Date(a.createdTimestamp));
+
+        let subGridHtml = docs.map(d => {
+          const financialData = computeDocumentFinancials(d.items, d.useVat);
+          const isQuote = d.type === 'quote';
+          const linkedDocument = d.convertedToInvoiceId
+            ? state.documents.find(item => item.id === d.convertedToInvoiceId)
+            : (d.sourceQuoteId ? state.documents.find(item => item.id === d.sourceQuoteId) : null);
+
+          let actionControlBadge = ``;
+          if (isQuote) {
+            actionControlBadge = d.isConverted ?
+              `<span class="px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-extrabold bg-neutral-500/10 text-neutral-500 border border-neutral-500/20">Invoiced</span>` :
+              `<span class="px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-extrabold bg-ios-orange/10 text-ios-orange border border-ios-orange/20">Waiting for approval</span>`;
+          } else {
+            actionControlBadge = d.isPaid ?
+              `<span class="px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-extrabold bg-ios-green/10 text-ios-green border border-ios-green/20">Paid</span>` :
+              `<span class="px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-extrabold bg-ios-red/10 text-ios-red border border-ios-red/20">Unpaid</span>`;
+          }
+
+          return `
+            <div class="ios-card p-4 sm:p-5 flex flex-col justify-between space-y-3">
+              <div class="space-y-1">
+                <div class="flex justify-between items-start gap-2">
+                  <h4 class="font-bold text-sm tracking-tight truncate flex-1">${sanitizeHtmlString(d.clientName)}</h4>
+                  ${actionControlBadge}
+                </div>
+                <p class="text-[9px] sm:text-[10px] font-semibold text-ios-gray tracking-tight truncate">${d.documentNumber} • ${d.executionDate}</p>
+                ${linkedDocument ? `<p class="text-[9px] text-ios-blue font-semibold">${isQuote ? 'Invoice created:' : 'Created from quote:'} ${sanitizeHtmlString(linkedDocument.documentNumber)}</p>` : ''}
+                <div class="pt-1">
+                  <p class="text-[10px] sm:text-xs text-ios-gray font-medium">${isQuote ? 'Quote total' : 'Invoice total'}</p>
+                  <p class="text-base sm:text-lg font-black tracking-tight mt-0.5 text-[var(--text-primary)]">${formatZAR(financialData.total)}</p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-1 pt-2 border-t border-[var(--border-system)]">
+                <button onclick="editExistingDocument('${d.id}')" class="text-left px-1.5 sm:px-2 py-1.5 text-[10px] sm:text-[11px] font-bold text-ios-blue hover:underline flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                  Edit
+                </button>
+                <button onclick="duplicateDocumentState('${d.id}')" class="text-left px-1.5 sm:px-2 py-1.5 text-[10px] sm:text-[11px] font-bold text-ios-gray hover:underline flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                   Make a copy
+                </button>
+                <button onclick="exportToPDFEngine('${d.id}')" class="text-left px-1.5 sm:px-2 py-1.5 text-[10px] sm:text-[11px] font-bold text-ios-purple hover:underline flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  PDF
+                </button>
+                <button onclick="triggerWhatsAppTransmissionLink('${d.id}')" class="text-left px-1.5 sm:px-2 py-1.5 text-[10px] sm:text-[11px] font-bold text-emerald-500 hover:underline flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  WhatsApp
+                </button>
+                
+                ${isQuote && !d.isConverted ? `
+                  <button onclick="convertQuoteToInvoiceEngine('${d.id}')" class="text-left col-span-2 px-2 py-2 mt-1 rounded bg-ios-green text-white text-[10px] sm:text-[11px] font-extrabold text-center hover:opacity-90 transition-all shadow-sm">Turn into an invoice</button>
+                ` : ''}
+
+                ${!isQuote ? `
+                  <button onclick="togglePaymentStateEngine('${d.id}')" class="text-left col-span-2 px-2 py-1.5 text-[10px] sm:text-[11px] font-extrabold text-center rounded border border-[var(--border-system)] bg-[var(--bg-system)] hover:bg-[var(--border-system)] transition-all">
+                    ${d.isPaid ? 'Mark as unpaid' : 'Mark as paid'}
+                  </button>
+                ` : ''}
+
+                <button onclick="deleteDocumentFromState('${d.id}')" class="text-left col-span-2 text-center mt-2 text-[8px] sm:text-[9px] font-bold text-ios-red hover:bg-ios-red/5 py-1 rounded transition-all">Delete</button>
+              </div>
+            </div>
+          `;
+        }).join('') || `
+          <div class="col-span-full py-12 sm:py-16 text-center space-y-3">
+            <p class="text-sm text-ios-gray">You have not created an invoice or quote yet.</p>
+            <button onclick="openNewDocumentForm()" class="bg-ios-blue text-white font-bold px-4 py-2 rounded-xl text-xs shadow">Create your first one</button>
+          </div>
+        `;
+
+        const wrapperHtml = `<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">${subGridHtml}</div>`;
+        const desktopView = document.getElementById('desktop-view-viewport');
+        const mobileView = document.getElementById('mobile-view-viewport');
+        if (desktopView) desktopView.innerHTML = wrapperHtml;
+        if (mobileView) mobileView.innerHTML = wrapperHtml;
+      };
+
+      // =========================================================================
+      // APEX FINANCIAL ANALYSIS INTELLIGENCE (REPORTS)
+      // =========================================================================
+      const renderReportsWorkspace = () => {
+        const docs = getActiveContextDocuments();
+        const paidInvoices = docs.filter(d => d.type === 'invoice' && d.isPaid);
+
+        const timestampNow = new Date();
+        const relativeWeekDelta = new Date(timestampNow.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const currentMonthBoundary = new Date(timestampNow.getFullYear(), timestampNow.getMonth(), 1);
+
+        const earnedThisWeek = paidInvoices.filter(d => new Date(d.createdTimestamp) >= relativeWeekDelta).reduce((acc,
+          d) => acc + computeDocumentFinancials(d.items, d.useVat).total, 0);
+        const earnedThisMonth = paidInvoices.filter(d => new Date(d.createdTimestamp) >= currentMonthBoundary).reduce((acc,
+          d) => acc + computeDocumentFinancials(d.items, d.useVat).total, 0);
+        const grandTotalAccrued = paidInvoices.reduce((acc, d) => acc + computeDocumentFinancials(d.items, d.useVat)
+        .total, 0);
+
+        const viewHtml = `
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
+            <div class="ios-card stat-card p-3 sm:p-4">
+              <p class="text-[8px] sm:text-[9px] font-bold text-ios-gray uppercase tracking-wider">Paid this week</p>
+              <h4 class="text-base sm:text-lg font-black tracking-tight mt-1 text-ios-green">${formatZAR(earnedThisWeek)}</h4>
+            </div>
+            <div class="ios-card stat-card p-3 sm:p-4">
+              <p class="text-[8px] sm:text-[9px] font-bold text-ios-gray uppercase tracking-wider">Paid this month</p>
+              <h4 class="text-base sm:text-lg font-black tracking-tight mt-1 text-ios-purple">${formatZAR(earnedThisMonth)}</h4>
+            </div>
+            <div class="ios-card stat-card p-3 sm:p-4">
+              <p class="text-[8px] sm:text-[9px] font-bold text-ios-gray uppercase tracking-wider">All payments</p>
+              <h4 class="text-base sm:text-lg font-black tracking-tight mt-1 text-ios-blue">${formatZAR(grandTotalAccrued)}</h4>
+            </div>
+            <div class="ios-card stat-card p-3 sm:p-4">
+              <p class="text-[8px] sm:text-[9px] font-bold text-ios-gray uppercase tracking-wider">Paid invoices</p>
+              <h4 class="text-base sm:text-lg font-black tracking-tight mt-1">${paidInvoices.length}</h4>
+            </div>
+          </div>
+
+          <div class="ios-card p-4 sm:p-5">
+            <h3 class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ios-gray mb-3 pb-2 border-b border-[var(--border-system)]">Payment history</h3>
+            <div class="divide-y divide-[var(--border-system)]">
+              ${paidInvoices.reverse().map(d => `
+                <div class="flex justify-between items-center py-2.5 sm:py-3 text-xs">
+                  <div class="min-w-0 flex-1 pr-2">
+                    <p class="font-bold text-[var(--text-primary)] text-[11px] sm:text-xs truncate">${sanitizeHtmlString(d.clientName)}</p>
+                    <p class="text-[9px] sm:text-[10px] text-ios-gray mt-0.5 truncate">${d.documentNumber} • Paid</p>
+                  </div>
+                  <span class="font-extrabold text-ios-green text-[11px] sm:text-xs flex-shrink-0">${formatZAR(computeDocumentFinancials(d.items, d.useVat).total)}</span>
+                </div>
+              `).join('') || '<p class="text-xs text-ios-gray text-center py-6">Paid invoices will appear here.</p>'}
+            </div>
+          </div>
+        `;
+
+        const desktopView = document.getElementById('desktop-view-viewport');
+        const mobileView = document.getElementById('mobile-view-viewport');
+        if (desktopView) desktopView.innerHTML = viewHtml;
+        if (mobileView) mobileView.innerHTML = viewHtml;
+      };
+
+      // =========================================================================
+      // CORPORATE INFRASTRUCTURE TREE WORKSPACE (COMPANIES)
+      // =========================================================================
+      const renderCompaniesWorkspace = () => {
+        const structuralListHtml = state.companies.map(c => `
+          <div class="ios-card p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 company-item" style="border-left:4px solid ${normalizeAccentColor(c.accentColor)}">
+            <div class="flex items-center gap-3 sm:gap-4 min-w-0 w-full sm:w-auto">
+              ${c.logo ? `<img src="${c.logo}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-contain border border-[var(--border-system)] flex-shrink-0" alt="Logo" onerror="this.style.display='none'">` : `<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-white font-bold text-base sm:text-lg flex-shrink-0" style="background:${normalizeAccentColor(c.accentColor)}">${c.name.charAt(0)}</div>`}
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full ${c.id === state.activeCompanyId ? 'bg-ios-green animate-pulse' : 'bg-transparent'} flex-shrink-0"></span>
+                  <p class="font-bold text-sm sm:text-base tracking-tight truncate">${sanitizeHtmlString(c.name)}</p>
+                </div>
+                <p class="text-[10px] sm:text-xs text-ios-gray font-medium mt-0.5 truncate">${sanitizeHtmlString(c.email)} • ${sanitizeHtmlString(c.phone || 'No phone')}</p>
+                <p class="text-[9px] sm:text-[10px] text-ios-gray mt-1 italic whitespace-pre-line">${sanitizeHtmlString(c.address)}</p>
+                <p class="text-[9px] font-bold mt-1" style="color:${normalizeAccentColor(c.accentColor)}">Brand colour · ${normalizeAccentColor(c.accentColor)}</p>
+              </div>
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto justify-end sm:justify-start company-actions flex-shrink-0">
+              <button onclick="editExistingCompanyNode('${c.id}')" class="px-2.5 sm:px-3 py-1.5 rounded-lg border border-[var(--border-system)] bg-[var(--bg-system)] text-[10px] sm:text-xs font-bold text-[var(--text-primary)] hover:bg-[var(--border-system)] transition-all">Edit</button>
+              <button onclick="purgeCompanyNodeEngine('${c.id}')" class="px-2.5 sm:px-3 py-1.5 rounded-lg border border-ios-red/20 bg-ios-red/10 text-[10px] sm:text-xs font-bold text-ios-red hover:bg-ios-red/20 transition-all">Delete</button>
+            </div>
+          </div>
+        `).join('') || `
+          <div class="py-12 sm:py-16 text-center space-y-4">
+            <p class="text-sm text-ios-gray">No businesses added yet.</p>
+          </div>
+        `;
+
+        const coreControlLayout = `
+          <div class="space-y-4">
+            <div class="flex justify-between items-center bg-ios-blue/5 border border-ios-blue/10 p-3 sm:p-4 rounded-xl">
+              <span class="text-[10px] sm:text-xs font-bold text-ios-blue">Businesses shown on your documents</span>
+              <button onclick="openNewCompanyNodeForm()" class="bg-ios-blue text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-bold hover:opacity-90 shadow-md">+ Add business</button>
+            </div>
+            <div class="space-y-3">${structuralListHtml}</div>
+          </div>
+        `;
+
+        const desktopView = document.getElementById('desktop-view-viewport');
+        const mobileView = document.getElementById('mobile-view-viewport');
+        if (desktopView) desktopView.innerHTML = coreControlLayout;
+        if (mobileView) mobileView.innerHTML = coreControlLayout;
+      };
+
+      // =========================================================================
+      // DYNAMIC iOS MODAL FORM FLOW SYSTEM GENERATOR MANAGERS
+      // =========================================================================
+      window.openUniversalSheet = (title, formInnerHtml) => {
+        const titleEl = document.getElementById('universalSheetTitle');
+        if (titleEl) titleEl.textContent = title;
+        const payload = document.getElementById('universalSheetPayload');
+        if (payload) payload.innerHTML = formInnerHtml;
+
+        const outerFrame = document.getElementById('universalSheetModal');
+        const innerFrame = document.getElementById('sheetContentFrame');
+
+        if (outerFrame) {
+          outerFrame.classList.remove('pointer-events-none', 'opacity-0');
+        }
+        if (innerFrame) {
+          innerFrame.classList.remove('scale-95', 'translate-y-4');
+        }
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => payload?.querySelector('input, select, textarea, button')?.focus(), 100);
+      };
+
+      window.closeUniversalSheet = () => {
+        const outerFrame = document.getElementById('universalSheetModal');
+        const innerFrame = document.getElementById('sheetContentFrame');
+
+        if (outerFrame) {
+          outerFrame.classList.add('pointer-events-none', 'opacity-0');
+        }
+        if (innerFrame) {
+          innerFrame.classList.add('scale-95', 'translate-y-4');
+        }
+        document.body.style.overflow = '';
+        state.editingTargetId = null;
+        pendingConfirmationAction = null;
+      };
+
+      const getDocumentStatus = documentRecord => {
+        if (documentRecord.type === 'quote') return documentRecord.isConverted ? 'invoiced' : 'waiting';
+        return documentRecord.isPaid ? 'paid' : 'unpaid';
+      };
+
+      const renderDocumentsWorkspace = () => {
+        const allDocuments = getActiveContextDocuments();
+        const invoiceCount = allDocuments.filter(documentRecord => documentRecord.type === 'invoice').length;
+        const quoteCount = allDocuments.filter(documentRecord => documentRecord.type === 'quote').length;
+        const unpaidTotal = allDocuments
+          .filter(documentRecord => documentRecord.type === 'invoice' && !documentRecord.isPaid)
+          .reduce((total, documentRecord) => total + computeDocumentFinancials(documentRecord.items, documentRecord.useVat).total, 0);
+
+        const docs = [...allDocuments].sort((first, second) => {
+          if (state.documentSort === 'oldest') return new Date(first.createdTimestamp) - new Date(second.createdTimestamp);
+          if (state.documentSort === 'highest') {
+            return computeDocumentFinancials(second.items, second.useVat).total - computeDocumentFinancials(first.items, first.useVat).total;
+          }
+          return new Date(second.createdTimestamp) - new Date(first.createdTimestamp);
+        });
+
+        const cardsHtml = docs.map((documentRecord, index) => {
+          const totals = computeDocumentFinancials(documentRecord.items, documentRecord.useVat);
+          const isQuote = documentRecord.type === 'quote';
+          const status = getDocumentStatus(documentRecord);
+          const accentColor = normalizeAccentColor(documentRecord.accentColor ||
+            state.companies.find(company => company.id === documentRecord.companyId)?.accentColor);
+          const linkedDocument = documentRecord.convertedToInvoiceId
+            ? state.documents.find(item => item.id === documentRecord.convertedToInvoiceId)
+            : (documentRecord.sourceQuoteId ? state.documents.find(item => item.id === documentRecord.sourceQuoteId) : null);
+          const itemSummary = (documentRecord.items || []).map(item => `${item.name || item.desc || ''} ${item.description || ''}`).join(' ');
+          const searchText = sanitizeHtmlString(`${documentRecord.clientName} ${documentRecord.documentNumber} ${documentRecord.referenceTag || ''} ${itemSummary}`.toLowerCase());
+          const statusLabel = status === 'paid' ? 'Paid' : status === 'unpaid' ? 'Unpaid' : status === 'invoiced' ? 'Invoiced' : 'Waiting';
+          const statusClass = status === 'paid' ? 'bg-ios-green/10 text-ios-green' :
+            status === 'unpaid' ? 'bg-ios-red/10 text-ios-red' :
+            status === 'invoiced' ? 'bg-ios-blue/10 text-ios-blue' : 'bg-ios-orange/10 text-ios-orange';
+
+          return `
+            <article data-document-card data-type="${documentRecord.type}" data-status="${status}" data-search="${searchText}"
+              class="document-card ios-card p-5 pl-6 flex flex-col justify-between gap-5"
+              style="--document-accent:${accentColor};animation-delay:${Math.min(index * 45, 360)}ms">
+              <div>
+                <div class="flex items-start justify-between gap-3">
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="text-[9px] font-black tracking-widest uppercase" style="color:${accentColor}">${isQuote ? 'Quote' : 'Invoice'}</span>
+                      <span class="px-2 py-1 rounded-full text-[8px] font-extrabold ${statusClass}">${statusLabel}</span>
+                    </div>
+                    <h3 class="font-extrabold text-base truncate">${sanitizeHtmlString(documentRecord.clientName)}</h3>
+                    <p class="text-[10px] text-ios-gray font-semibold mt-1">${sanitizeHtmlString(documentRecord.documentNumber)} · ${documentRecord.executionDate}</p>
+                  </div>
+                  <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white flex-shrink-0" style="background:${accentColor}">
+                    ${isQuote ? 'Q' : 'I'}
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mt-5 p-3 rounded-xl bg-[var(--bg-system)]">
+                  <div>
+                    <p class="text-[9px] text-ios-gray font-bold">TOTAL</p>
+                    <p class="text-sm font-black mt-1">${formatZAR(totals.total)}</p>
+                  </div>
+                  <div>
+                    <p class="text-[9px] text-ios-gray font-bold">ITEMS</p>
+                    <p class="text-sm font-black mt-1">${(documentRecord.items || []).length}</p>
+                  </div>
+                </div>
+
+                <p class="text-[10px] text-ios-gray mt-3 truncate">${sanitizeHtmlString(documentRecord.items?.[0]?.name || documentRecord.items?.[0]?.desc || 'No item description')}${documentRecord.items?.length > 1 ? ` + ${documentRecord.items.length - 1} more` : ''}</p>
+                ${linkedDocument ? `<p class="text-[9px] font-bold mt-2" style="color:${accentColor}">${isQuote ? 'Invoice created:' : 'From quote:'} ${sanitizeHtmlString(linkedDocument.documentNumber)}</p>` : ''}
+              </div>
+
+              <div class="grid grid-cols-[1fr_1fr_auto] gap-2 pt-3 border-t border-[var(--border-system)]">
+                <button onclick="editExistingDocument('${documentRecord.id}')" class="py-2.5 rounded-lg bg-[var(--bg-system)] text-[10px] font-bold hover:opacity-80">Edit</button>
+                <button onclick="exportToPDFEngine('${documentRecord.id}')" class="py-2.5 rounded-lg text-white text-[10px] font-bold hover:opacity-90" style="background:${accentColor}">Download PDF</button>
+                <button onclick="openDocumentActions('${documentRecord.id}')" aria-label="More actions" class="w-10 rounded-lg bg-[var(--bg-system)] text-lg font-black">···</button>
+              </div>
+            </article>
+          `;
+        }).join('');
+
+        const workspaceHtml = `
+          <div class="space-y-5">
+            <section class="ios-card p-4 sm:p-5">
+              <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                  <p class="text-[10px] font-bold text-ios-gray uppercase tracking-wider">Document centre</p>
+                  <h3 class="text-lg font-black mt-1">Invoices and quotes</h3>
+                  <p class="text-[10px] text-ios-gray mt-1">${invoiceCount} invoices · ${quoteCount} quotes · ${formatZAR(unpaidTotal)} unpaid</p>
+                </div>
+                <div class="flex gap-2">
+                  <button onclick="openNewDocumentForm('invoice')" class="flex-1 lg:flex-none px-4 py-3 rounded-xl bg-ios-blue text-white text-xs font-bold shadow-md">+ Invoice</button>
+                  <button onclick="openNewDocumentForm('quote')" class="flex-1 lg:flex-none px-4 py-3 rounded-xl bg-ios-purple text-white text-xs font-bold shadow-md">+ Quote</button>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-[minmax(220px,1fr)_auto_auto] gap-3 mt-5">
+                <label class="relative">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-ios-gray">⌕</span>
+                  <input type="search" value="${sanitizeHtmlString(state.documentSearch)}" oninput="updateDocumentSearch(this.value)"
+                    class="document-search ios-input pl-9" placeholder="Search customer, number, item or reference">
+                </label>
+                <select onchange="updateDocumentStatusFilter(this.value)" class="document-status-filter ios-input text-xs lg:w-44">
+                  <option value="all" ${state.documentStatusFilter === 'all' ? 'selected' : ''}>Every status</option>
+                  <option value="unpaid" ${state.documentStatusFilter === 'unpaid' ? 'selected' : ''}>Unpaid invoices</option>
+                  <option value="paid" ${state.documentStatusFilter === 'paid' ? 'selected' : ''}>Paid invoices</option>
+                  <option value="waiting" ${state.documentStatusFilter === 'waiting' ? 'selected' : ''}>Quotes waiting</option>
+                  <option value="invoiced" ${state.documentStatusFilter === 'invoiced' ? 'selected' : ''}>Converted quotes</option>
+                </select>
+                <select onchange="updateDocumentSort(this.value)" class="ios-input text-xs lg:w-40">
+                  <option value="newest" ${state.documentSort === 'newest' ? 'selected' : ''}>Newest first</option>
+                  <option value="oldest" ${state.documentSort === 'oldest' ? 'selected' : ''}>Oldest first</option>
+                  <option value="highest" ${state.documentSort === 'highest' ? 'selected' : ''}>Highest total</option>
+                </select>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2 mt-3">
+                ${[['all','All'],['invoice','Invoices'],['quote','Quotes']].map(([value, label]) =>
+                  `<button onclick="updateDocumentTypeFilter('${value}')" data-type-filter="${value}" class="filter-chip ${state.documentTypeFilter === value ? 'active' : ''} px-3 py-2 rounded-lg text-[10px] font-bold">${label}</button>`
+                ).join('')}
+                <span class="document-result-count ml-auto text-[10px] font-bold text-ios-gray"></span>
+              </div>
+            </section>
+
+            ${docs.length ? `
+              <div class="document-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">${cardsHtml}</div>
+              <div class="document-filter-empty hidden ios-card py-14 text-center">
+                <p class="font-bold text-sm">No documents match those filters.</p>
+                <button onclick="clearDocumentFilters()" class="text-xs text-ios-blue font-bold mt-3">Clear filters</button>
+              </div>
+            ` : `
+              <div class="ios-card py-14 text-center">
+                <div class="w-14 h-14 rounded-2xl bg-ios-blue/10 text-ios-blue flex items-center justify-center text-2xl font-black mx-auto">+</div>
+                <h3 class="font-black mt-4">Create your first document</h3>
+                <p class="text-xs text-ios-gray mt-2">Start with an invoice or send a quote to a customer.</p>
+                <button onclick="openCreateMenu()" class="bg-ios-blue text-white font-bold px-5 py-3 rounded-xl text-xs shadow mt-4">Create now</button>
+              </div>
+            `}
+          </div>
+        `;
+
+        const desktopView = document.getElementById('desktop-view-viewport');
+        const mobileView = document.getElementById('mobile-view-viewport');
+        if (desktopView) desktopView.innerHTML = workspaceHtml;
+        if (mobileView) mobileView.innerHTML = workspaceHtml;
+        applyDocumentFilters();
+      };
+
+      window.applyDocumentFilters = () => {
+        ['desktop-view-viewport', 'mobile-view-viewport'].forEach(viewportId => {
+          const viewport = document.getElementById(viewportId);
+          if (!viewport) return;
+          let visibleCount = 0;
+          viewport.querySelectorAll('[data-document-card]').forEach(card => {
+            const matchesSearch = !state.documentSearch || card.dataset.search.includes(state.documentSearch.toLowerCase());
+            const matchesType = state.documentTypeFilter === 'all' || card.dataset.type === state.documentTypeFilter;
+            const matchesStatus = state.documentStatusFilter === 'all' || card.dataset.status === state.documentStatusFilter;
+            const visible = matchesSearch && matchesType && matchesStatus;
+            card.classList.toggle('hidden', !visible);
+            if (visible) visibleCount += 1;
+          });
+          const count = viewport.querySelector('.document-result-count');
+          if (count) count.textContent = `${visibleCount} shown`;
+          const empty = viewport.querySelector('.document-filter-empty');
+          if (empty) empty.classList.toggle('hidden', visibleCount > 0);
+          const grid = viewport.querySelector('.document-grid');
+          if (grid) grid.classList.toggle('hidden', visibleCount === 0);
+        });
+      };
+
+      window.updateDocumentSearch = value => {
+        state.documentSearch = value.trim();
+        document.querySelectorAll('.document-search').forEach(input => {
+          if (input.value !== value) input.value = value;
+        });
+        applyDocumentFilters();
+      };
+
+      window.updateDocumentTypeFilter = value => {
+        state.documentTypeFilter = value;
+        document.querySelectorAll('[data-type-filter]').forEach(button => button.classList.toggle('active', button.dataset.typeFilter === value));
+        applyDocumentFilters();
+      };
+
+      window.updateDocumentStatusFilter = value => {
+        state.documentStatusFilter = value;
+        document.querySelectorAll('.document-status-filter').forEach(select => { select.value = value; });
+        applyDocumentFilters();
+      };
+
+      window.updateDocumentSort = value => {
+        state.documentSort = value;
+        renderDocumentsWorkspace();
+      };
+
+      window.clearDocumentFilters = () => {
+        state.documentSearch = '';
+        state.documentTypeFilter = 'all';
+        state.documentStatusFilter = 'all';
+        renderDocumentsWorkspace();
+      };
+
+      let pendingConfirmationAction = null;
+      window.askForConfirmation = (title, message, confirmLabel, action) => {
+        pendingConfirmationAction = action;
+        window.openUniversalSheet(title, `
+          <div class="max-w-lg mx-auto py-2">
+            <p class="text-sm text-ios-gray leading-relaxed">${sanitizeHtmlString(message)}</p>
+            <div class="flex justify-end gap-2 mt-6">
+              <button onclick="cancelPendingAction()" class="px-4 py-3 rounded-xl font-bold text-sm bg-[var(--bg-system)]">Cancel</button>
+              <button onclick="runConfirmedAction()" class="px-4 py-3 rounded-xl font-bold text-sm bg-ios-blue text-white">${sanitizeHtmlString(confirmLabel)}</button>
+            </div>
+          </div>
+        `);
+      };
+
+      window.runConfirmedAction = () => {
+        const action = pendingConfirmationAction;
+        pendingConfirmationAction = null;
+        closeUniversalSheet();
+        if (action) action();
+      };
+
+      window.cancelPendingAction = () => {
+        pendingConfirmationAction = null;
+        closeUniversalSheet();
+      };
+
+      window.showToast = message => {
+        document.getElementById('appToast')?.remove();
+        const toast = document.createElement('div');
+        toast.id = 'appToast';
+        toast.setAttribute('role', 'status');
+        toast.className = 'fixed left-1/2 bottom-24 -translate-x-1/2 z-[70] bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-bold';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2800);
+      };
+
+      window.showFormError = (message, fieldId = null) => {
+        const payload = document.getElementById('universalSheetPayload');
+        if (!payload) return;
+        let errorBox = document.getElementById('formErrorMessage');
+        if (!errorBox) {
+          errorBox = document.createElement('div');
+          errorBox.id = 'formErrorMessage';
+          errorBox.setAttribute('role', 'alert');
+          errorBox.className = 'mb-3 p-3 rounded-xl bg-ios-red/10 border border-ios-red/20 text-ios-red text-xs font-bold';
+          payload.prepend(errorBox);
+        }
+        errorBox.textContent = message;
+        const field = fieldId ? document.getElementById(fieldId) : document.querySelector('.line-name-field');
+        field?.focus();
+        field?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeUniversalSheet();
+      });
+
+      window.openCreateMenu = () => {
+        const hasBusiness = Boolean(state.activeCompanyId);
+        window.openUniversalSheet('Create something new', `
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 py-2">
+            <button onclick="closeUniversalSheet(); openNewDocumentForm('invoice')" ${hasBusiness ? '' : 'disabled'}
+              class="form-section text-left hover:border-ios-blue transition-all disabled:opacity-40">
+              <span class="w-10 h-10 rounded-xl bg-ios-blue text-white flex items-center justify-center text-xl font-black mb-4">+</span>
+              <strong class="block text-sm">New invoice</strong>
+              <span class="block text-[10px] text-ios-gray mt-1">Bill a customer for work or products.</span>
+            </button>
+            <button onclick="closeUniversalSheet(); openNewDocumentForm('quote')" ${hasBusiness ? '' : 'disabled'}
+              class="form-section text-left hover:border-ios-purple transition-all disabled:opacity-40">
+              <span class="w-10 h-10 rounded-xl bg-ios-purple text-white flex items-center justify-center text-xl font-black mb-4">+</span>
+              <strong class="block text-sm">New quote</strong>
+              <span class="block text-[10px] text-ios-gray mt-1">Send a price before the work begins.</span>
+            </button>
+            <button onclick="closeUniversalSheet(); openNewCompanyNodeForm()"
+              class="form-section text-left hover:border-ios-green transition-all">
+              <span class="w-10 h-10 rounded-xl bg-ios-green text-white flex items-center justify-center text-xl font-black mb-4">+</span>
+              <strong class="block text-sm">Add a business</strong>
+              <span class="block text-[10px] text-ios-gray mt-1">Set up another brand or trading name.</span>
+            </button>
+          </div>
+          ${hasBusiness ? '' : '<p class="text-xs text-ios-orange font-bold">Add your business before creating an invoice or quote.</p>'}
+        `);
+      };
+
+      window.openDocumentActions = id => {
+        const documentRecord = state.documents.find(item => item.id === id);
+        if (!documentRecord) return;
+        const isQuote = documentRecord.type === 'quote';
+        window.openUniversalSheet(`${isQuote ? 'Quote' : 'Invoice'} ${documentRecord.documentNumber}`, `
+          <div class="space-y-2">
+            <button onclick="closeUniversalSheet(); duplicateDocumentState('${id}')" class="w-full p-4 rounded-xl bg-[var(--bg-system)] text-left text-sm font-bold">Make a copy</button>
+            <button onclick="closeUniversalSheet(); triggerWhatsAppTransmissionLink('${id}')" class="w-full p-4 rounded-xl bg-[var(--bg-system)] text-left text-sm font-bold text-emerald-600">Share on WhatsApp</button>
+            ${isQuote && !documentRecord.isConverted ? `<button onclick="closeUniversalSheet(); convertQuoteToInvoiceEngine('${id}')" class="w-full p-4 rounded-xl bg-ios-green text-white text-left text-sm font-bold">Turn into an invoice</button>` : ''}
+            ${!isQuote ? `<button onclick="closeUniversalSheet(); togglePaymentStateEngine('${id}')" class="w-full p-4 rounded-xl bg-[var(--bg-system)] text-left text-sm font-bold">${documentRecord.isPaid ? 'Mark as unpaid' : 'Mark as paid'}</button>` : ''}
+            <button onclick="closeUniversalSheet(); deleteDocumentFromState('${id}')" class="w-full p-4 rounded-xl bg-ios-red/10 text-left text-sm font-bold text-ios-red">Delete this ${isQuote ? 'quote' : 'invoice'}</button>
+          </div>
+        `);
+      };
+
+      // =========================================================================
+      // COMPONENT MODAL: DOCUMENT ENTRY MATRIX CONTROLLER
+      // =========================================================================
+      window.openNewDocumentForm = (preferredType = 'invoice') => {
+        if (!state.activeCompanyId) {
+          openNewCompanyNodeForm();
+          showToast('Add your business first');
+          return;
+        }
+        state.editingTargetId = null;
+        generateDocumentFormModalSheet(preferredType === 'quote' ? 'New quote' : 'New invoice', null, preferredType);
+      };
+
+      window.editExistingDocument = (id) => {
+        state.editingTargetId = id;
+        generateDocumentFormModalSheet('Edit invoice or quote', state.documents.find(d => d.id === id));
+      };
+
+      const generateDocumentFormModalSheet = (titleLabel, dataRecord = null, preferredType = 'invoice') => {
+        const initialType = dataRecord?.type || preferredType;
+        const defaultDocNum = dataRecord ? dataRecord.documentNumber : ((initialType === 'quote' ? 'QUT-' : 'INV-') + Date.now().toString().slice(-6));
+        const defaultDate = dataRecord ? dataRecord.executionDate : new Date().toISOString().split('T')[0];
+        const activeCompany = state.companies.find(company => company.id === state.activeCompanyId);
+        const initialAccentColor = normalizeAccentColor(dataRecord?.accentColor || activeCompany?.accentColor);
+        const initialTerms = dataRecord
+          ? (dataRecord.terms === undefined ? (activeCompany?.defaultTerms || '') : dataRecord.terms)
+          : (activeCompany?.defaultTerms || '');
+
+        const sheetHtml = `
+          <div class="space-y-4">
+            <p class="text-xs text-ios-gray">Fill in the details below. You can come back and edit them at any time.</p>
+            <div class="form-section">
+              <span class="form-section-title">1. What are you creating?</span>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="field-label">Document type</label>
+                <select id="form_docType" class="ios-input" onchange="window.handleFormDocTypeVariantChange(this.value)" ${dataRecord?.type === 'quote' && dataRecord?.isConverted ? 'disabled title="An invoiced quote stays as a quote for your records"' : ''}>
+                  <option value="invoice" ${initialType === 'invoice' ? 'selected' : ''}>Invoice</option>
+                  <option value="quote" ${initialType === 'quote' ? 'selected' : ''}>Quote</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label">Invoice or quote number</label>
+                <input id="form_docNum" type="text" class="ios-input" value="${sanitizeHtmlString(defaultDocNum)}">
+              </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+              <div>
+                <label class="field-label">Date created</label>
+                <input id="form_docDate" type="date" class="ios-input text-xs" value="${defaultDate}">
+              </div>
+              <div>
+                <label class="field-label">Payment due date</label>
+                <input id="form_docDue" type="date" class="ios-input text-xs" value="${dataRecord?.dueDate || ''}">
+              </div>
+              <div>
+                <label class="field-label">Your reference (optional)</label>
+                <input id="form_docRef" type="text" class="ios-input text-xs" placeholder="For example, PO 123" value="${sanitizeHtmlString(dataRecord?.referenceTag || '')}">
+              </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <span class="form-section-title">2. Who is it for?</span>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <input id="form_cName" type="text" class="ios-input" placeholder="Customer name *" value="${sanitizeHtmlString(dataRecord?.clientName || '')}">
+                <input id="form_cEmail" type="email" class="ios-input" placeholder="Email address" value="${sanitizeHtmlString(dataRecord?.clientEmail || '')}">
+                <input id="form_cPhone" type="text" class="ios-input" placeholder="Phone number" value="${sanitizeHtmlString(dataRecord?.clientPhone || '')}">
+                <textarea id="form_cAddr" class="ios-input sm:col-span-2 min-h-[72px]" placeholder="Billing address, including postal code">${sanitizeHtmlString(dataRecord?.clientAddr || '')}</textarea>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="flex justify-between items-center mb-2">
+                <span class="form-section-title !mb-0">3. What are you charging for?</span>
+                <button onclick="window.appendBlankLineItemRowField()" class="text-xs text-ios-blue font-bold px-3 py-2 rounded-lg bg-ios-blue/10">+ Add another item</button>
+              </div>
+              <p class="text-[10px] text-ios-gray mb-3">Add the item, a helpful description, the number of units and the price for one unit.</p>
+              <div class="item-grid item-grid-heading mb-1" aria-hidden="true">
+                <span>Item</span><span>Description</span><span>Units</span><span>Price per unit</span><span></span>
+              </div>
+              <div id="form_itemsTrackContainer" class="space-y-2 overflow-y-auto pr-1 no-scrollbar">
+                </div>
+            </div>
+
+            <div id="documentBrandPreview" class="border-2 pt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[var(--bg-system)] p-3 rounded-xl transition-colors" style="border-color:${initialAccentColor}">
+              <div class="flex items-center gap-3">
+                <span class="text-xs font-bold">Add 15% VAT</span>
+                <button type="button" id="form_vatToggle" role="switch" aria-label="Add 15% VAT" aria-checked="${dataRecord ? (dataRecord.useVat ? 'true' : 'false') : 'true'}" class="ios-switch ${dataRecord ? (dataRecord.useVat ? 'active' : '') : 'active'}" onclick="this.classList.toggle('active'); this.setAttribute('aria-checked', this.classList.contains('active')); window.evaluateDynamicFormFinancialAggregateTotals();"></button>
+              </div>
+              <div class="text-right w-full sm:w-auto">
+                <p class="text-[9px] font-bold text-ios-gray">Total</p>
+                <h3 id="form_totalLabelDisplay" class="text-lg font-black text-ios-blue">R 0.00</h3>
+              </div>
+            </div>
+
+            <div class="form-section space-y-3">
+              <span class="form-section-title">Notes and terms</span>
+              <div>
+                <label class="field-label">Message to your customer (optional)</label>
+                <textarea id="form_notes" class="ios-input min-h-[76px]" placeholder="A thank-you note or other useful information">${sanitizeHtmlString(dataRecord?.notes || '')}</textarea>
+              </div>
+              <div>
+                <label class="field-label">Terms and conditions (optional)</label>
+                <textarea id="form_terms" class="ios-input min-h-[110px]" placeholder="For example: Payment is due within 14 days. Late payments may incur an agreed fee.">${sanitizeHtmlString(initialTerms)}</textarea>
+                <p class="text-[9px] text-ios-gray mt-1">Your business defaults are added automatically. Changes here apply only to this document.</p>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <span class="form-section-title">4. Choose the document colour</span>
+              <p class="text-[10px] text-ios-gray mb-3">Your business colour is selected automatically. You can change it for this document.</p>
+              ${renderAccentPicker('form_docAccent', initialAccentColor, 'documentBrandPreview')}
+              <div class="flex items-center justify-between gap-4 mt-4 pt-4 border-t border-[var(--border-system)]">
+                <div>
+                  <p class="text-xs font-bold">Show business logo on PDF</p>
+                  <p class="text-[9px] text-ios-gray mt-1">${activeCompany?.logo ? 'Your saved logo will be included.' : 'Add a logo in Business settings first.'}</p>
+                </div>
+                <button type="button" id="form_logoToggle" role="switch" aria-label="Show logo on PDF"
+                  aria-checked="${dataRecord?.showLogo === false ? 'false' : 'true'}"
+                  class="ios-switch ${dataRecord?.showLogo === false ? '' : 'active'}"
+                  onclick="this.classList.toggle('active'); this.setAttribute('aria-checked', this.classList.contains('active'))"></button>
+              </div>
+            </div>
+
+            <div class="modal-actions">
+              <button onclick="closeUniversalSheet()" class="px-4 py-3 rounded-xl font-bold text-sm bg-[var(--bg-system)]">Cancel</button>
+              <button id="form_saveDocumentButton" onclick="window.commitFormDocumentSaveWorkflow()" class="bg-ios-blue text-white font-extrabold px-5 py-3 rounded-xl shadow-lg hover:opacity-95 transition-all text-sm">
+                Save ${initialType === 'quote' ? 'quote' : 'invoice'}
+              </button>
+            </div>
+          </div>
+        `;
+
+        window.openUniversalSheet(titleLabel, sheetHtml);
+
+        // Append sub elements inside the runtime document creation cycle
+        if (dataRecord && dataRecord.items && dataRecord.items.length > 0) {
+          dataRecord.items.forEach(itm => window.appendBlankLineItemRowField(itm));
+        } else {
+          window.appendBlankLineItemRowField();
+        }
+        window.evaluateDynamicFormFinancialAggregateTotals();
+      };
+
+      window.handleFormDocTypeVariantChange = (val) => {
+        const indexInput = document.getElementById('form_docNum');
+        if (!indexInput) return;
+        if (!indexInput.value || indexInput.value.startsWith('INV-') || indexInput.value.startsWith('QUT-') || indexInput
+          .value.startsWith('DOC-')) {
+          indexInput.value = (val === 'quote' ? 'QUT-' : 'INV-') + Date.now().toString().slice(-6);
+        }
+        const saveButton = document.getElementById('form_saveDocumentButton');
+        if (saveButton) saveButton.textContent = val === 'quote' ? 'Save quote' : 'Save invoice';
+      };
+
+      window.appendBlankLineItemRowField = (itemData = null) => {
+        const container = document.getElementById('form_itemsTrackContainer');
+        if (!container) return;
+        const wrappingRowDiv = document.createElement('div');
+        wrappingRowDiv.className =
+          "item-grid bg-[var(--bg-card)] p-2 rounded-lg border border-[var(--border-system)] dynamic-item-form-row";
+
+        wrappingRowDiv.innerHTML = `
+          <label class="line-name-wrap"><span class="field-label sm:hidden">Item</span><input type="text" class="ios-input ios-input-sm line-name-field" placeholder="e.g. Website design" value="${sanitizeHtmlString(itemData?.name || itemData?.desc || '')}"></label>
+          <label class="line-description-wrap"><span class="field-label sm:hidden">Description</span><input type="text" class="ios-input ios-input-sm line-description-field" placeholder="A short, helpful description" value="${sanitizeHtmlString(itemData?.description || '')}"></label>
+          <label class="line-qty-wrap"><span class="field-label sm:hidden">Units</span><input type="number" min="0" step="0.01" inputmode="decimal" class="ios-input ios-input-sm text-center line-qty-field" placeholder="1" value="${itemData?.qty ?? 1}" oninput="window.evaluateDynamicFormFinancialAggregateTotals()"></label>
+          <label class="line-price-wrap"><span class="field-label sm:hidden">Price per unit</span><input type="number" min="0" step="0.01" inputmode="decimal" class="ios-input ios-input-sm text-right line-price-field" placeholder="0.00" value="${itemData?.price ?? 0}" oninput="window.evaluateDynamicFormFinancialAggregateTotals()"></label>
+          <button type="button" aria-label="Remove this item" title="Remove item" onclick="this.parentElement.remove(); window.ensureAtLeastOneItemRow(); window.evaluateDynamicFormFinancialAggregateTotals();" class="h-10 w-10 text-ios-red font-bold text-lg hover:bg-ios-red/5 rounded transition-all flex-shrink-0">&times;</button>
+        `;
+        container.appendChild(wrappingRowDiv);
+        wrappingRowDiv.querySelector('.line-name-field')?.focus();
+      };
+
+      window.ensureAtLeastOneItemRow = () => {
+        if (!document.querySelector('.dynamic-item-form-row')) window.appendBlankLineItemRowField();
+      };
+
+      window.evaluateDynamicFormFinancialAggregateTotals = () => {
+        const rows = document.querySelectorAll('.dynamic-item-form-row');
+        let arrayPayload = [];
+        rows.forEach(r => {
+          const qtyEl = r.querySelector('.line-qty-field');
+          const priceEl = r.querySelector('.line-price-field');
+          arrayPayload.push({
+            qty: parseFloat(qtyEl?.value) || 0,
+            price: parseFloat(priceEl?.value) || 0
+          });
+        });
+        const vatToggle = document.getElementById('form_vatToggle');
+        const isVatActive = vatToggle ? vatToggle.classList.contains('active') : false;
+        const computedMetrics = computeDocumentFinancials(arrayPayload, isVatActive);
+        const totalLabel = document.getElementById('form_totalLabelDisplay');
+        if (totalLabel) totalLabel.textContent = formatZAR(computedMetrics.total);
+      };
+
+      window.commitFormDocumentSaveWorkflow = () => {
+        const clientVal = document.getElementById('form_cName')?.value?.trim();
+        if (!clientVal) return showFormError('Please enter the customer name.', 'form_cName');
+
+        const rows = document.querySelectorAll('.dynamic-item-form-row');
+        let parsedRowsArray = [];
+        rows.forEach(r => {
+          const itemNameVal = r.querySelector('.line-name-field')?.value?.trim();
+          const descriptionVal = r.querySelector('.line-description-field')?.value?.trim();
+          if (itemNameVal) {
+            parsedRowsArray.push({
+              name: itemNameVal,
+              description: descriptionVal || '',
+              desc: itemNameVal,
+              qty: parseFloat(r.querySelector('.line-qty-field')?.value) || 0,
+              price: parseFloat(r.querySelector('.line-price-field')?.value) || 0
+            });
+          }
+        });
+
+        if (parsedRowsArray.length === 0) {
+          return showFormError('Please enter a name for at least one item.');
+        }
+
+        const currentActiveEditorTargetId = state.editingTargetId;
+        const fallbackHistorySnapshot = currentActiveEditorTargetId ? state.documents.find(d => d.id ===
+          currentActiveEditorTargetId) : null;
+
+        const vatToggle = document.getElementById('form_vatToggle');
+        const isVatActive = vatToggle ? vatToggle.classList.contains('active') : false;
+
+        const structuralDocumentStatePayload = {
+          id: currentActiveEditorTargetId || createUniqueId('document'),
+          companyId: state.activeCompanyId,
+          type: document.getElementById('form_docType')?.value || 'invoice',
+          documentNumber: document.getElementById('form_docNum')?.value?.trim() || 'DOC-' + Date.now().toString().slice(-
+          4),
+          executionDate: document.getElementById('form_docDate')?.value || new Date().toISOString().split('T')[0],
+          dueDate: document.getElementById('form_docDue')?.value || '',
+          referenceTag: document.getElementById('form_docRef')?.value?.trim() || '',
+          clientName: clientVal,
+          clientEmail: document.getElementById('form_cEmail')?.value?.trim() || '',
+          clientPhone: document.getElementById('form_cPhone')?.value?.trim() || '',
+          clientAddr: document.getElementById('form_cAddr')?.value?.trim() || '',
+          items: parsedRowsArray,
+          useVat: isVatActive,
+          notes: document.getElementById('form_notes')?.value?.trim() || '',
+          terms: document.getElementById('form_terms')?.value?.trim() || '',
+          accentColor: normalizeAccentColor(document.getElementById('form_docAccent')?.value),
+          showLogo: document.getElementById('form_logoToggle')?.classList.contains('active') !== false,
+          isPaid: fallbackHistorySnapshot ? fallbackHistorySnapshot.isPaid : false,
+          isConverted: fallbackHistorySnapshot ? fallbackHistorySnapshot.isConverted : false,
+          sourceQuoteId: fallbackHistorySnapshot?.sourceQuoteId || null,
+          convertedToInvoiceId: fallbackHistorySnapshot?.convertedToInvoiceId || null,
+          createdTimestamp: fallbackHistorySnapshot ? fallbackHistorySnapshot.createdTimestamp : new Date().toISOString()
+        };
+
+        let nextDocuments = [...state.documents];
+        if (currentActiveEditorTargetId) {
+          const searchIdx = state.documents.findIndex(d => d.id === currentActiveEditorTargetId);
+          if (searchIdx > -1) nextDocuments[searchIdx] = structuralDocumentStatePayload;
+        } else {
+          nextDocuments.push(structuralDocumentStatePayload);
+        }
+
+        if (!persistStateSnapshot(state.companies, nextDocuments, state.activeCompanyId)) return;
+        state.documents = nextDocuments;
+        closeUniversalSheet();
+        switchView(state.activeWorkspaceView);
+        showToast(currentActiveEditorTargetId ? 'Changes saved' : 'Document saved');
+      };
+
+      // =========================================================================
+      // EXECUTABLE MUTATION PIPELINE ACTIONS ENGINE
+      // =========================================================================
+      window.duplicateDocumentState = (id) => {
+        const sourceObj = state.documents.find(d => d.id === id);
+        if (!sourceObj) return;
+
+        const duplicatedInstanceObject = {
+          ...sourceObj,
+          id: createUniqueId('document'),
+          items: (sourceObj.items || []).map(item => ({ ...item })),
+          documentNumber: (sourceObj.type === 'quote' ? 'QUT-' : 'INV-') + Date.now().toString().slice(-6),
+          isPaid: false,
+          isConverted: false,
+          sourceQuoteId: null,
+          convertedToInvoiceId: null,
+          createdTimestamp: new Date().toISOString()
+        };
+
+        const nextDocuments = [...state.documents, duplicatedInstanceObject];
+        if (!persistStateSnapshot(state.companies, nextDocuments, state.activeCompanyId)) return;
+        state.documents = nextDocuments;
+        switchView(state.activeWorkspaceView);
+        showToast('Copy created');
+      };
+
+      window.togglePaymentStateEngine = (id) => {
+        const targetedDoc = state.documents.find(d => d.id === id);
+        if (targetedDoc) {
+          const nextDocuments = state.documents.map(documentRecord =>
+            documentRecord.id === id ? { ...documentRecord, isPaid: !documentRecord.isPaid } : documentRecord
+          );
+          if (!persistStateSnapshot(state.companies, nextDocuments, state.activeCompanyId)) return;
+          state.documents = nextDocuments;
+          switchView(state.activeWorkspaceView);
+          showToast(targetedDoc.isPaid ? 'Marked as unpaid' : 'Marked as paid');
+        }
+      };
+
+      window.deleteDocumentFromState = (id) => {
+        const documentToDelete = state.documents.find(d => d.id === id);
+        if (!documentToDelete) return;
+        askForConfirmation('Delete this document?', `${documentToDelete.documentNumber} will be permanently deleted.`, 'Delete', () => {
+          const nextDocuments = state.documents.filter(d => d.id !== id);
+          if (!persistStateSnapshot(state.companies, nextDocuments, state.activeCompanyId)) return;
+          state.documents = nextDocuments;
+          switchView(state.activeWorkspaceView);
+          showToast('Document deleted');
+        });
+      };
+
+      // CRITICAL UPDATE SPECIFICATION:
+      // Convert Quote to Invoice once accepted
+      window.convertQuoteToInvoiceEngine = (id) => {
+        const targetedQuote = state.documents.find(d => d.id === id);
+        if (!targetedQuote || targetedQuote.type !== 'quote' || targetedQuote.isConverted) return;
+        askForConfirmation('Turn this quote into an invoice?', 'The quote will stay in your records and a new invoice will be created with the same customer, items and total.', 'Create invoice', () => {
+          const now = Date.now();
+          const invoiceId = createUniqueId('invoice');
+          const invoice = {
+            ...targetedQuote,
+            id: invoiceId,
+            type: 'invoice',
+            documentNumber: 'INV-' + now.toString().slice(-6),
+            executionDate: new Date().toISOString().split('T')[0],
+            items: (targetedQuote.items || []).map(item => ({ ...item })),
+            isPaid: false,
+            isConverted: false,
+            sourceQuoteId: targetedQuote.id,
+            createdTimestamp: new Date().toISOString()
+          };
+          const nextDocuments = state.documents.map(documentRecord =>
+            documentRecord.id === id
+              ? { ...documentRecord, isConverted: true, convertedToInvoiceId: invoiceId }
+              : documentRecord
+          );
+          nextDocuments.push(invoice);
+          if (!persistStateSnapshot(state.companies, nextDocuments, state.activeCompanyId)) return;
+          state.documents = nextDocuments;
+          switchView('documents');
+          showToast(`Invoice ${invoice.documentNumber} created`);
+        });
+      };
+
+      window.triggerWhatsAppTransmissionLink = (id) => {
+        const d = state.documents.find(x => x.id === id);
+        if (!d) return;
+        const formattedTotal = formatZAR(computeDocumentFinancials(d.items, d.useVat).total);
+        const outboundUrlStringText =
+          `Here is your ${d.type}: ${d.documentNumber}\nTotal: ${formattedTotal}\nCustomer: ${d.clientName}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(outboundUrlStringText)}`, '_blank');
+      };
+
+      // =========================================================================
+      // PREMIUM INVOICE PDF GENERATION - CLEAN BLUE EDITION
+      // =========================================================================
+      window.exportToPDFEngine = async (id) => {
+        const d = state.documents.find(x => x.id === id);
+        if (!d) return;
+        showToast('Preparing your branded PDF…');
+
+        const ownerCompany = state.companies.find(c => c.id === d.companyId) || {
+          name: "Your Business Name",
+          email: "info@yourbusiness.com",
+          address: "Your Business Address",
+          phone: "",
+          bank: "",
+          accNum: "",
+          accountName: "",
+          accountType: "",
+          branchCode: "",
+          swiftCode: "",
+          paymentReference: "",
+          defaultTerms: "",
+          logo: "",
+          accentColor: "#0071e3"
+        };
+
+        const financialMetrics = computeDocumentFinancials(d.items, d.useVat);
+        const documentLabel = d.type === 'quote' ? 'QUOTE' : 'INVOICE';
+        const accentColor = normalizeAccentColor(d.accentColor || ownerCompany.accentColor);
+        const companyAddress = ownerCompany.address || ownerCompany.companyAddress || '';
+        const customerAddress = d.clientAddr || d.clientAddress || '';
+        const bankingDetails = {
+          accountName: ownerCompany.accountName || ownerCompany.name || '',
+          bankName: ownerCompany.bank || ownerCompany.bankName || '',
+          accountNumber: ownerCompany.accNum || ownerCompany.accountNumber || '',
+          accountType: ownerCompany.accountType || '',
+          branchCode: ownerCompany.branchCode || '',
+          swiftCode: ownerCompany.swiftCode || ownerCompany.swift || ''
+        };
+        const hasBankingDetails = Object.entries(bankingDetails)
+          .some(([key, value]) => key !== 'accountName' && Boolean(String(value || '').trim()));
+        const documentTerms = d.terms === undefined ? (ownerCompany.defaultTerms || '') : d.terms;
+
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText =
+          'position:absolute;left:-9999px;top:0;width:800px;padding:0;background:#ffffff;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;';
+
+        wrapper.innerHTML = `
+    <div style="padding:40px 45px 0 45px;">
+      <!-- Header -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid ${accentColor};padding-bottom:25px;margin-bottom:30px;">
+        <div style="display:flex;align-items:center;gap:16px;max-width:65%;">
+          ${ownerCompany.logo && d.showLogo !== false
+            ? `<img src="${sanitizeHtmlString(ownerCompany.logo)}" alt="" style="width:76px;height:76px;object-fit:contain;border-radius:14px;">`
+            : `<div style="width:60px;height:60px;border-radius:14px;background:${accentColor};color:white;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:800;">${sanitizeHtmlString(ownerCompany.name?.charAt(0) || 'B')}</div>`}
+          <div>
+            <h1 style="font-size:25px;font-weight:700;margin:0 0 5px 0;color:#1c1c1e;">${sanitizeHtmlString(ownerCompany.name)}</h1>
+            <p style="font-size:11px;color:#8e8e93;margin:0;">${sanitizeHtmlString(ownerCompany.email)}${ownerCompany.phone ? ` | ${sanitizeHtmlString(ownerCompany.phone)}` : ''}</p>
+            <p style="font-size:11px;color:#8e8e93;margin:3px 0 0 0;line-height:1.45;">${formatMultilineText(companyAddress)}</p>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="background:#f5f5f7;padding:12px 20px;border-radius:12px;">
+            <p style="font-size:10px;font-weight:600;margin:0 0 4px 0;color:${accentColor};letter-spacing:1.5px;">${documentLabel}</p>
+            <p style="font-size:18px;font-weight:800;margin:0;color:#1c1c1e;">#${sanitizeHtmlString(d.documentNumber)}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bill To / From -->
+      <div style="display:flex;justify-content:space-between;margin-bottom:35px;">
+        <div style="width:45%;">
+          <p style="font-size:10px;font-weight:700;margin:0 0 8px 0;color:${accentColor};letter-spacing:1px;">FROM</p>
+          <p style="margin:0;font-weight:600;color:#1c1c1e;">${sanitizeHtmlString(ownerCompany.name)}</p>
+          <p style="margin:5px 0 0 0;font-size:12px;color:#5a5a72;line-height:1.5;">${formatMultilineText(companyAddress)}</p>
+        </div>
+        <div style="width:45%;text-align:right;">
+          <p style="font-size:10px;font-weight:700;margin:0 0 8px 0;color:${accentColor};letter-spacing:1px;">${d.type === 'quote' ? 'PREPARED FOR' : 'BILL TO'}</p>
+          <p style="margin:0;font-weight:600;color:#1c1c1e;">${sanitizeHtmlString(d.clientName)}</p>
+          <p style="margin:5px 0 0 0;font-size:12px;color:#5a5a72;line-height:1.5;">${formatMultilineText(customerAddress)}</p>
+          <p style="margin:5px 0 0 0;font-size:11px;color:#8e8e93;">${sanitizeHtmlString(d.clientEmail)}</p>
+          ${d.clientPhone ? `<p style="margin:3px 0 0 0;font-size:11px;color:#8e8e93;">${sanitizeHtmlString(d.clientPhone)}</p>` : ''}
+        </div>
+      </div>
+
+      <!-- Date Row -->
+      <div style="display:flex;gap:30px;margin-bottom:35px;padding:15px 0;border-top:1px solid #e5e5ea;border-bottom:1px solid #e5e5ea;">
+        <div>
+           <p style="font-size:10px;font-weight:600;margin:0 0 4px 0;color:#8e8e93;">${documentLabel} DATE</p>
+          <p style="font-size:13px;font-weight:500;margin:0;color:#1c1c1e;">${d.executionDate}</p>
+        </div>
+        <div>
+          <p style="font-size:10px;font-weight:600;margin:0 0 4px 0;color:#8e8e93;">DUE DATE</p>
+          <p style="font-size:13px;font-weight:500;margin:0;color:#1c1c1e;">${d.dueDate || 'Upon Receipt'}</p>
+        </div>
+        ${d.referenceTag ? `
+        <div>
+          <p style="font-size:10px;font-weight:600;margin:0 0 4px 0;color:#8e8e93;">REFERENCE</p>
+          <p style="font-size:13px;font-weight:500;margin:0;color:#1c1c1e;">${sanitizeHtmlString(d.referenceTag)}</p>
+        </div>
+        ` : ''}
+      </div>
+
+      <!-- Items Table -->
+      <table style="width:100%;border-collapse:collapse;margin-bottom:30px;" cellpadding="12">
+        <thead>
+          <tr style="background:${accentColor}12;border-bottom:2px solid ${accentColor};">
+             <th style="text-align:left;font-size:11px;font-weight:700;color:#1c1c1e;letter-spacing:0.5px;">ITEM</th>
+             <th style="text-align:left;font-size:11px;font-weight:700;color:#1c1c1e;letter-spacing:0.5px;">DESCRIPTION</th>
+            <th style="text-align:center;font-size:11px;font-weight:700;color:#1c1c1e;letter-spacing:0.5px;">QTY</th>
+            <th style="text-align:right;font-size:11px;font-weight:700;color:#1c1c1e;letter-spacing:0.5px;">UNIT PRICE</th>
+            <th style="text-align:right;font-size:11px;font-weight:700;color:#1c1c1e;letter-spacing:0.5px;">TOTAL</th>
+           </tr>
+        </thead>
+        <tbody>
+          ${d.items.map((i, idx) => `
+            <tr style="border-bottom:1px solid #f0f0f2;">
+              <td style="font-size:13px;font-weight:600;color:#1c1c1e;padding:12px 0;">${sanitizeHtmlString(i.name || i.desc)}</td>
+              <td style="font-size:11px;color:#5a5a72;padding:12px 6px;">${sanitizeHtmlString(i.description || '')}</td>
+              <td style="text-align:center;font-size:13px;color:#5a5a72;padding:12px 0;">${i.qty}</td>
+              <td style="text-align:right;font-size:13px;color:#5a5a72;padding:12px 0;">${formatZAR(i.price)}</td>
+              <td style="text-align:right;font-size:13px;font-weight:600;color:#1c1c1e;padding:12px 0;">${formatZAR(i.qty * i.price)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+
+      <!-- Totals -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:35px;">
+        <div style="width:280px;">
+          <div style="display:flex;justify-content:space-between;padding:8px 0;">
+            <span style="font-size:12px;color:#5a5a72;">Subtotal</span>
+            <span style="font-size:12px;font-weight:500;">${formatZAR(financialMetrics.subtotal)}</span>
+          </div>
+          ${d.useVat ? `
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e5e5ea;">
+            <span style="font-size:12px;color:#5a5a72;">VAT (15%)</span>
+            <span style="font-size:12px;font-weight:500;">${formatZAR(financialMetrics.vat)}</span>
+          </div>
+          ` : '<div style="border-bottom:1px solid #e5e5ea; margin:5px 0;"></div>'}
+          <div style="display:flex;justify-content:space-between;padding:12px 0 0 0;">
+            <span style="font-size:14px;font-weight:700;color:#1c1c1e;">TOTAL</span>
+            <span style="font-size:22px;font-weight:800;color:${accentColor};">${formatZAR(financialMetrics.total)}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      ${d.notes ? `
+      <div style="margin-bottom:20px;padding:15px;background:#f8f9fc;border-radius:10px;">
+        <p style="font-size:10px;font-weight:700;margin:0 0 6px 0;color:${accentColor};letter-spacing:1px;">NOTES</p>
+        <p style="margin:0;font-size:11px;color:#5a5a72;line-height:1.5;">${sanitizeHtmlString(d.notes)}</p>
+      </div>
+      ` : ''}
+
+      <!-- Payment Details -->
+      ${hasBankingDetails ? `
+      <div style="margin-bottom:30px;padding:15px;background:#f8f9fc;border-radius:10px;">
+        <p style="font-size:10px;font-weight:700;margin:0 0 8px 0;color:${accentColor};letter-spacing:1px;">PAYMENT DETAILS</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;">
+          ${bankingDetails.accountName ? `<p style="margin:0;font-size:11px;color:#1c1c1e;"><strong>Account holder:</strong> ${sanitizeHtmlString(bankingDetails.accountName)}</p>` : ''}
+          ${bankingDetails.bankName ? `<p style="margin:0;font-size:11px;color:#1c1c1e;"><strong>Bank:</strong> ${sanitizeHtmlString(bankingDetails.bankName)}</p>` : ''}
+          ${bankingDetails.accountNumber ? `<p style="margin:0;font-size:11px;color:#1c1c1e;"><strong>Account number:</strong> ${sanitizeHtmlString(bankingDetails.accountNumber)}</p>` : ''}
+          ${bankingDetails.accountType ? `<p style="margin:0;font-size:11px;color:#1c1c1e;"><strong>Account type:</strong> ${sanitizeHtmlString(bankingDetails.accountType)}</p>` : ''}
+          ${bankingDetails.branchCode ? `<p style="margin:0;font-size:11px;color:#1c1c1e;"><strong>Branch code:</strong> ${sanitizeHtmlString(bankingDetails.branchCode)}</p>` : ''}
+          ${bankingDetails.swiftCode ? `<p style="margin:0;font-size:11px;color:#1c1c1e;"><strong>SWIFT/BIC:</strong> ${sanitizeHtmlString(bankingDetails.swiftCode)}</p>` : ''}
+        </div>
+        <p style="margin:9px 0 0 0;padding-top:8px;border-top:1px solid #e5e5ea;font-size:10px;color:#5a5a72;"><strong>Payment reference:</strong> ${sanitizeHtmlString(ownerCompany.paymentReference || d.documentNumber)}</p>
+      </div>
+      ` : ''}
+
+      ${documentTerms ? `
+      <div style="margin-bottom:24px;padding:15px;border:1px solid #e5e5ea;border-left:3px solid ${accentColor};border-radius:10px;">
+        <p style="font-size:10px;font-weight:700;margin:0 0 7px 0;color:${accentColor};letter-spacing:1px;">TERMS &amp; CONDITIONS</p>
+        <p style="margin:0;font-size:9px;color:#5a5a72;line-height:1.55;">${formatMultilineText(documentTerms)}</p>
+      </div>
+      ` : ''}
+
+      <!-- Footer -->
+      <div style="padding:20px 0;text-align:center;border-top:1px solid #e5e5ea;">
+        <p style="margin:0;font-size:9px;color:#8e8e93;">Thank you for your business</p>
+      </div>
+    </div>
+  `;
+
+        document.body.appendChild(wrapper);
+
+        try {
+          await Promise.all(Array.from(wrapper.querySelectorAll('img')).map(image =>
+            image.complete
+              ? image.decode?.().catch(() => undefined)
+              : new Promise(resolve => {
+                  image.onload = resolve;
+                  image.onerror = resolve;
+                })
+          ));
+          const canvas = await html2canvas(wrapper, {
+            scale: 2.5,
+            backgroundColor: '#ffffff',
+            useCORS: true,
+            logging: false
+          });
+          const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+          const imageHeight = (canvas.height * pdfWidth) / canvas.width;
+          const imageData = canvas.toDataURL('image/png');
+          let remainingHeight = imageHeight;
+          let yPosition = 0;
+
+          pdf.addImage(imageData, 'PNG', 0, yPosition, pdfWidth, imageHeight, undefined, 'FAST');
+          remainingHeight -= pageHeight;
+          while (remainingHeight > 0) {
+            yPosition -= pageHeight;
+            pdf.addPage();
+            pdf.addImage(imageData, 'PNG', 0, yPosition, pdfWidth, imageHeight, undefined, 'FAST');
+            remainingHeight -= pageHeight;
+          }
+          pdf.save(`${d.type === 'quote' ? 'Quote' : 'Invoice'}_${d.documentNumber}.pdf`);
+          showToast('PDF downloaded');
+        } catch (err) {
+          showToast("We couldn't create the PDF. Please try again.");
+        } finally {
+          document.body.removeChild(wrapper);
+        }
+      };
+      // =========================================================================
+      // COMPONENT MODAL: CORPORATE NODE REGISTRY CONFIGURATOR
+      // =========================================================================
+      window.openNewCompanyNodeForm = () => {
+        state.editingTargetId = null;
+        generateCompanyNodeModalSheet('Add your business');
+      };
+
+      window.editExistingCompanyNode = (id) => {
+        state.editingTargetId = id;
+        generateCompanyNodeModalSheet('Edit business details', state.companies.find(c => c.id === id));
+      };
+
+      const generateCompanyNodeModalSheet = (titleLabel, dataRecord = null) => {
+        const initialCompanyAccent = normalizeAccentColor(dataRecord?.accentColor);
+        const sheetHtml = `
+          <div class="space-y-4">
+            <p class="text-xs text-ios-gray">These details will appear on your invoices and quotes.</p>
+            <div class="form-section space-y-3">
+              <span class="form-section-title">Business details</span>
+            <div>
+              <label class="field-label">Business name *</label>
+              <input id="form_compName" type="text" class="ios-input" placeholder="For example, Wiretree Digital" value="${sanitizeHtmlString(dataRecord?.name || '')}">
+            </div>
+            <div>
+              <label class="field-label">Email address</label>
+              <input id="form_compEmail" type="email" class="ios-input" placeholder="info@yourbusiness.co.za" value="${sanitizeHtmlString(dataRecord?.email || '')}">
+            </div>
+            <div>
+              <label class="field-label">Business address</label>
+              <textarea id="form_compAddr" class="ios-input min-h-[88px]" placeholder="Street address&#10;Suburb and city&#10;Postal code">${sanitizeHtmlString(dataRecord?.address || '')}</textarea>
+            </div>
+            <div>
+              <label class="field-label">Phone number</label>
+              <input id="form_compPhone" type="text" class="ios-input" placeholder="+27 81 000 0000" value="${sanitizeHtmlString(dataRecord?.phone || '')}">
+            </div>
+
+            <div>
+              <label class="field-label">Logo for invoices and quotes (optional)</label>
+              <div class="flex flex-wrap items-center gap-3">
+                <img id="logoPreview" class="logo-preview" src="${sanitizeHtmlString(dataRecord?.logo || '')}" alt="Business logo" onerror="this.style.display='none'">
+                <div class="flex flex-wrap items-center gap-2">
+                  <input type="file" id="logoFileInput" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
+                  <button onclick="document.getElementById('logoFileInput').click()" class="logo-upload-btn">Choose logo</button>
+                  <button onclick="clearLogo()" class="text-[10px] text-ios-red font-bold px-3 py-1.5 rounded-lg border border-ios-red/20 bg-ios-red/5 hover:bg-ios-red/10 transition-all">Remove</button>
+                </div>
+              </div>
+              <input id="form_compLogo" type="hidden" value="${sanitizeHtmlString(dataRecord?.logo || '')}">
+            </div>
+            </div>
+
+            <div id="companyBrandPreview" class="form-section border-2 transition-colors" style="border-color:${initialCompanyAccent}">
+              <span class="form-section-title">Brand colour</span>
+              <p class="text-[10px] text-ios-gray mb-3">New invoices and quotes will use this colour by default.</p>
+              ${renderAccentPicker('form_compAccent', initialCompanyAccent, 'companyBrandPreview')}
+            </div>
+
+            <div class="form-section">
+              <span class="form-section-title">Where should customers pay?</span>
+              <p class="text-[10px] text-ios-gray mb-3">These details are printed on invoices and quotes when at least one field is filled in.</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label class="field-label">Account holder</label>
+                  <input id="form_compAccName" type="text" class="ios-input text-xs" placeholder="Your business name" value="${sanitizeHtmlString(dataRecord?.accountName || '')}">
+                </div>
+                <div>
+                  <label class="field-label">Bank name</label>
+                  <input id="form_compBank" type="text" class="ios-input text-xs" placeholder="FNB" value="${sanitizeHtmlString(dataRecord?.bank || '')}">
+                </div>
+                <div>
+                  <label class="field-label">Account number</label>
+                  <input id="form_compAcc" type="text" class="ios-input text-xs" placeholder="620123456789" value="${sanitizeHtmlString(dataRecord?.accNum || '')}">
+                </div>
+                <div>
+                  <label class="field-label">Account type</label>
+                  <input id="form_compAccType" type="text" class="ios-input text-xs" placeholder="Business cheque" value="${sanitizeHtmlString(dataRecord?.accountType || '')}">
+                </div>
+                <div>
+                  <label class="field-label">Branch code</label>
+                  <input id="form_compBranch" type="text" class="ios-input text-xs" placeholder="250655" value="${sanitizeHtmlString(dataRecord?.branchCode || '')}">
+                </div>
+                <div>
+                  <label class="field-label">SWIFT/BIC (optional)</label>
+                  <input id="form_compSwift" type="text" class="ios-input text-xs" placeholder="FIRNZAJJ" value="${sanitizeHtmlString(dataRecord?.swiftCode || '')}">
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="field-label">Payment reference guidance</label>
+                  <input id="form_compPaymentRef" type="text" class="ios-input text-xs" placeholder="Use the invoice number as your reference" value="${sanitizeHtmlString(dataRecord?.paymentReference || '')}">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <span class="form-section-title">Default terms and conditions</span>
+              <p class="text-[10px] text-ios-gray mb-3">These are copied into every new invoice and quote. You can still change them per document.</p>
+              <textarea id="form_compTerms" class="ios-input min-h-[130px]" placeholder="For example:&#10;1. Payment is due within 14 days.&#10;2. Work begins once the quote is accepted.">${sanitizeHtmlString(dataRecord?.defaultTerms || '')}</textarea>
+            </div>
+
+            <div class="modal-actions">
+              <button onclick="closeUniversalSheet()" class="px-4 py-3 rounded-xl font-bold text-sm bg-[var(--bg-system)]">Cancel</button>
+              <button onclick="window.commitFormCompanyNodeSaveWorkflow()" class="bg-ios-blue text-white font-extrabold px-5 py-3 rounded-xl shadow-lg text-sm">Save business</button>
+            </div>
+          </div>
+        `;
+        window.openUniversalSheet(titleLabel, sheetHtml);
+        // If there's a logo, show it
+        if (dataRecord?.logo) {
+          const preview = document.getElementById('logoPreview');
+          if (preview) preview.src = dataRecord.logo;
+        }
+      };
+
+      // Logo upload handler
+      window.handleLogoUpload = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+          showFormError('Please choose an image file.');
+          event.target.value = '';
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          showFormError('That logo is too large. Please choose an image smaller than 10 MB.');
+          event.target.value = '';
+          return;
+        }
+
+        const imageUrl = URL.createObjectURL(file);
+        const image = new Image();
+        image.onload = () => {
+          const maxDimension = 512;
+          const scale = Math.min(1, maxDimension / Math.max(image.width, image.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(image.width * scale));
+          canvas.height = Math.max(1, Math.round(image.height * scale));
+          canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL('image/webp', 0.82);
+          URL.revokeObjectURL(imageUrl);
+
+          if (dataUrl.length > 700000) {
+            showFormError('That logo is still too large after resizing. Please choose a simpler image.');
+            return;
+          }
+          const preview = document.getElementById('logoPreview');
+          if (preview) {
+            preview.src = dataUrl;
+            preview.style.display = 'block';
+          }
+          const logoInput = document.getElementById('form_compLogo');
+          if (logoInput) logoInput.value = dataUrl;
+          showToast('Logo ready');
+        };
+        image.onerror = () => {
+          URL.revokeObjectURL(imageUrl);
+          showFormError('We could not read that image. Please choose a different one.');
+        };
+        image.src = imageUrl;
+        event.target.value = '';
+      };
+
+      window.clearLogo = () => {
+        const preview = document.getElementById('logoPreview');
+        if (preview) {
+          preview.src = '';
+          preview.style.display = 'none';
+        }
+        const logoInput = document.getElementById('form_compLogo');
+        if (logoInput) logoInput.value = '';
+        const fileInput = document.getElementById('logoFileInput');
+        if (fileInput) fileInput.value = '';
+      };
+
+      window.commitFormCompanyNodeSaveWorkflow = () => {
+        const nameVal = document.getElementById('form_compName')?.value?.trim();
+        if (!nameVal) return showFormError('Please enter your business name.', 'form_compName');
+
+        const targetedConfigId = state.editingTargetId;
+        const structuralCorporatePayload = {
+          id: targetedConfigId || createUniqueId('business'),
+          name: nameVal,
+          email: document.getElementById('form_compEmail')?.value?.trim() || '',
+          address: document.getElementById('form_compAddr')?.value?.trim() || '',
+          phone: document.getElementById('form_compPhone')?.value?.trim() || '',
+          logo: document.getElementById('form_compLogo')?.value?.trim() || '',
+          accountName: document.getElementById('form_compAccName')?.value?.trim() || '',
+          bank: document.getElementById('form_compBank')?.value?.trim() || '',
+          accNum: document.getElementById('form_compAcc')?.value?.trim() || '',
+          accountType: document.getElementById('form_compAccType')?.value?.trim() || '',
+          branchCode: document.getElementById('form_compBranch')?.value?.trim() || '',
+          swiftCode: document.getElementById('form_compSwift')?.value?.trim() || '',
+          paymentReference: document.getElementById('form_compPaymentRef')?.value?.trim() || '',
+          defaultTerms: document.getElementById('form_compTerms')?.value?.trim() || '',
+          accentColor: normalizeAccentColor(document.getElementById('form_compAccent')?.value)
+        };
+
+        let nextCompanies = [...state.companies];
+        let nextActiveCompanyId = state.activeCompanyId;
+        if (targetedConfigId) {
+          const matchingIdx = state.companies.findIndex(c => c.id === targetedConfigId);
+          if (matchingIdx > -1) nextCompanies[matchingIdx] = structuralCorporatePayload;
+        } else {
+          nextCompanies.push(structuralCorporatePayload);
+          if (!nextActiveCompanyId) nextActiveCompanyId = structuralCorporatePayload.id;
+        }
+
+        if (!persistStateSnapshot(nextCompanies, state.documents, nextActiveCompanyId)) return;
+        state.companies = nextCompanies;
+        state.activeCompanyId = nextActiveCompanyId;
+        syncDropdownSelectors();
+        closeUniversalSheet();
+        switchView('companies');
+        showToast(targetedConfigId ? 'Business details updated' : 'Business added');
+      };
+
+      window.purgeCompanyNodeEngine = (id) => {
+        const company = state.companies.find(c => c.id === id);
+        if (!company) return;
+        askForConfirmation('Delete this business?', `This will permanently delete ${company.name} and all of its invoices and quotes.`, 'Delete business', () => {
+          const nextCompanies = state.companies.filter(c => c.id !== id);
+          const nextDocuments = state.documents.filter(d => d.companyId !== id);
+          const nextActiveCompanyId = state.activeCompanyId === id
+            ? nextCompanies[0]?.id || null
+            : state.activeCompanyId;
+          if (!persistStateSnapshot(nextCompanies, nextDocuments, nextActiveCompanyId)) return;
+          state.companies = nextCompanies;
+          state.documents = nextDocuments;
+          state.activeCompanyId = nextActiveCompanyId;
+          syncDropdownSelectors();
+          switchView('companies');
+          showToast('Business deleted');
+        });
+      };
+
+      // =========================================================================
+      // FLAWLESS SYSTEM INTEGRATED INTERFACE LIGHT/DARK ENVIRONMENT SWITCH MATRICES
+      // =========================================================================
+      window.masterThemeToggler = () => {
+        const rootElement = document.documentElement;
+        const activeDarkStatusFlag = rootElement.classList.contains('dark');
+
+        const nextStateThemeString = activeDarkStatusFlag ? 'light' : 'dark';
+
+        rootElement.classList.toggle('dark', !activeDarkStatusFlag);
+        rootElement.classList.toggle('light', activeDarkStatusFlag);
+
+        try {
+          localStorage.setItem('bf_premium_theme_state_v2', nextStateThemeString);
+        } catch (error) {
+          showStorageProblem(error);
+        }
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute('content', nextStateThemeString === 'dark' ? '#000000' : '#f5f5f7');
+        }
+      };
+
+      // =========================================================================
+      // COLD INITIALIZATION LIFECYCLE BOOT LOOPS
+      // =========================================================================
+      (function bootSequenceSystemLoop() {
+        // Evaluate systemic local environmental theme parameters safely
+        let savedCacheEnvironmentTheme = 'light';
+        try {
+          savedCacheEnvironmentTheme = localStorage.getItem('bf_premium_theme_state_v2') || 'light';
+        } catch (error) {
+          storageReadWarning = 'This browser is blocking local storage. Your changes may not be kept after you close the app.';
+          console.error('Could not read the saved theme:', error);
+        }
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(savedCacheEnvironmentTheme);
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute('content', savedCacheEnvironmentTheme === 'dark' ? '#000000' : '#f5f5f7');
+        }
+
+        // Build view state environments dynamically
+        syncDropdownSelectors();
+        switchView('dashboard');
+        if (storageReadWarning) setTimeout(() => showToast(storageReadWarning), 200);
+      })();
+
+    })();
+  </script>
+</body>
+
+<script>
+  // PWA Installation Prompt
+  let deferredPrompt;
+
+  // Listen for the beforeinstallprompt event
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent Chrome 76+ from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later
+    deferredPrompt = e;
+    
+    // Show the install button or prompt
+    showInstallPrompt();
+  });
+
+  // Function to show the install prompt
+  function showInstallPrompt() {
+    // Check if the app is already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      return; // Already installed
+    }
+
+    // Create a custom install banner
+    const installBanner = document.createElement('div');
+    installBanner.id = 'installBanner';
+    installBanner.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 400px;
+      width: 90%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-system);
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    `;
+
+    installBanner.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+        <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#0071e3,#af52de);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:20px;flex-shrink:0;">B</div>
+        <div style="min-width:0;">
+          <div style="font-weight:600;font-size:14px;color:var(--text-primary);">Install BizFlow</div>
+          <div style="font-size:12px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Get the full app experience</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button onclick="dismissInstallPrompt()" style="padding:8px 12px;border:none;background:transparent;color:var(--text-secondary);font-weight:600;font-size:13px;cursor:pointer;border-radius:8px;">Later</button>
+        <button id="installBtn" style="padding:8px 16px;border:none;background:#0071e3;color:white;font-weight:600;font-size:13px;border-radius:10px;cursor:pointer;box-shadow:0 2px 8px rgba(0,113,227,0.3);">Install</button>
+      </div>
+    `;
+
+    document.body.appendChild(installBanner);
+
+    // Add click handler for install button
+    document.getElementById('installBtn').addEventListener('click', async () => {
+      if (deferredPrompt) {
+        // Show the install prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        const choiceResult = await deferredPrompt.userChoice;
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+          dismissInstallPrompt();
+        } else {
+          console.log('User dismissed the install prompt');
+        }
+        deferredPrompt = null;
+      }
+    });
+
+    // Add animation keyframes
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateX(-50%) translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Function to dismiss the install banner
+  window.dismissInstallPrompt = function() {
+    const banner = document.getElementById('installBanner');
+    if (banner) {
+      banner.style.opacity = '0';
+      banner.style.transform = 'translateX(-50%) translateY(20px)';
+      setTimeout(() => banner.remove(), 400);
+    }
+  };
+
+  // Handle successful installation
+  window.addEventListener('appinstalled', (evt) => {
+    console.log('BizFlow was installed successfully!');
+    dismissInstallPrompt();
+  });
+
+  // Check if app is already in standalone mode on load
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    console.log('App is already installed and running in standalone mode');
+  }
+</script>
+
+</html>
